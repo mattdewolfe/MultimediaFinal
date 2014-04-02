@@ -86,11 +86,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\GameManager.cpp" />
+    <ClCompile Include="..\HUD.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\ObjectFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GameManager.h" />
+    <ClInclude Include="..\HUD.h" />
     <ClInclude Include="..\ObjectFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

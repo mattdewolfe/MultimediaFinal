@@ -1,4 +1,7 @@
+#pragma once
 #include "..\Engine\Advanced2D.h"
+#include "GameManager.h"
+;
 using namespace Advanced2D;
 
 //camera object
@@ -10,10 +13,10 @@ Camera *camera2;
 
 bool game_preload() 
 {
-    g_engine->setAppTitle("MESH ENTITY DEMO");
+    g_engine->setAppTitle("The Next Curling");
     g_engine->setFullscreen(false);
-    g_engine->setScreenWidth(800);
-    g_engine->setScreenHeight(600);
+    g_engine->setScreenWidth(1024);
+    g_engine->setScreenHeight(768);
     g_engine->setColorDepth(32);    
     return 1;
 }
@@ -37,7 +40,7 @@ bool game_init(HWND)
     light->setColor(D3DXCOLOR(0,0,0,0));
 
     g_engine->SetAmbient(D3DCOLOR_RGBA(1,1,0,0));
-
+/*
     //load meshes
     Mesh *mesh;
 	 mesh = new Mesh();
@@ -50,7 +53,7 @@ bool game_init(HWND)
 
         //add mesh to entity manager
         g_engine->addEntity(mesh);
-
+		*/
     return 1;
 }
 
@@ -112,8 +115,8 @@ void game_controllerLeftTrigger(int index, int value){}
 void game_controllerRightTrigger(int index, int value){}
 void game_controllerThumbLX(int index, float value){}
 void game_controllerThumbLY(int index, float value){}
-void game_controllerThumbRX(int index, float value) { }
-void game_controllerThumbRY(int index, float value) { }
+void game_controllerThumbRX(int index, float value) {}
+void game_controllerThumbRY(int index, float value) {}
 
 
 
