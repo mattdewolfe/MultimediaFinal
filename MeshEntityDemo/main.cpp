@@ -1,4 +1,6 @@
 #include "..\Engine\Advanced2D.h"
+#include "GameManager.h"
+
 using namespace Advanced2D;
 
 //camera object
@@ -6,15 +8,15 @@ Camera *camera;
 Camera *camera2;
 Light *light;
 Light *light2;
-
+GameManager gameManager;
 #define MAX 10
 
 bool game_preload() 
 {
     g_engine->setAppTitle("Hole in Ball");
     g_engine->setFullscreen(false);
-    g_engine->setScreenWidth(1024);
-    g_engine->setScreenHeight(768);
+    g_engine->setScreenWidth(1600);
+    g_engine->setScreenHeight(900);
     g_engine->setColorDepth(32);    
     return 1;
 }
@@ -107,7 +109,11 @@ void game_end()
 }
 
 void game_render2d() { }
-void game_keyPress(int key) { }
+void game_keyPress(int key) 
+{
+	if (key == 27)
+		g_engine->Close();
+}
 void game_mouseButton(int button) { }
 void game_mouseMotion(int x,int y) { }
 void game_mouseMove(int x,int y) { }
