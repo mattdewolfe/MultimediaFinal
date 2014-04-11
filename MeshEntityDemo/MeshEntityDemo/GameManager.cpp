@@ -18,7 +18,7 @@ void GameManager::ChangePlayer(DWORD _time)
 	else if (currentPlayer == PLAYER_THREE)
 		currentPlayer = PLAYER_FOUR;
 
-	turnStartTime = _time;		
+	turnStartTime = _time;
 }
 
 void GameManager::AddPlayer(void)
@@ -32,6 +32,10 @@ void GameManager::RemovePlayer(void)
 		players--;
 }
 
+void GameManager::Update()
+{
+
+}
 GameManager::~GameManager(void)
 {
 }

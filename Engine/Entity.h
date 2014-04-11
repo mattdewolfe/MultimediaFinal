@@ -10,6 +10,15 @@ namespace Advanced2D {
         RENDER3D = 1
     };
 
+	enum GAMESTATE {
+		MAIN_MENU,
+		GAME_PLAY,
+		PAUSE,
+		SCORING,
+		GAME_OVER,
+		GAME_STATE_MAX
+	};
+
     class Entity {
     private:
         int id;
@@ -22,6 +31,8 @@ namespace Advanced2D {
         int objectType;
         int lifetimeLength;
         Timer lifetimeTimer;
+		// Store the game state for an object to be draw during
+		GAMESTATE drawState;
 
     public:
         Entity(enum RenderType renderType);
@@ -52,6 +63,9 @@ namespace Advanced2D {
 
         int getObjectType() { return objectType; }
         void setObjectType(int value) { objectType = value; }
+
+		void setDrawState(GAMESTATE _drawState) { drawState = _drawState; }
+		GAMESTATE getDrawState() { return drawState; }
 
     };
 

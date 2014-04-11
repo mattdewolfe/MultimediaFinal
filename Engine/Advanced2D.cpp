@@ -472,7 +472,8 @@ namespace Advanced2D
         void Engine::Draw3DEntities()
         {
             std::list<Entity*>::iterator iter;
-            Entity *entity;
+           
+			Entity *entity;
             
             iter = p_entities.begin();
             while (iter != p_entities.end())

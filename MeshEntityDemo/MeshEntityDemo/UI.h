@@ -12,7 +12,7 @@ public:
 	virtual ~UI(void);
 	void Update();
 	void LoadSprites();
-	void HideVisuals(GAMESTATE _perState);
+	void DrawVisuals(GAMESTATE _perState);
 };
 #endif
 

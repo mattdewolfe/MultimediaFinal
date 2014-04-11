@@ -3,7 +3,8 @@
 
 namespace Advanced2D {
 
-    Entity::Entity(enum RenderType renderType)
+    Entity::Entity(enum RenderType renderType) :
+		drawState(MAIN_MENU)
     {
         this->renderType = renderType;
         this->id = -1;

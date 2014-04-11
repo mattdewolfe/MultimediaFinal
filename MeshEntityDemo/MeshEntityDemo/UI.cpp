@@ -9,7 +9,7 @@ void UI::LoadSprites()
 	// load all sprites, and pass into g_engine->addEntity
 }
 
-void UI::HideVisuals(GAMESTATE _perState)
+void UI::DrawVisuals(GAMESTATE _perState)
 {
 	switch(_perState)
 	{

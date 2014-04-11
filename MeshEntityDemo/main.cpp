@@ -9,7 +9,6 @@ Camera *camera2;
 Light *light;
 Light *light2;
 GameManager gameManager;
-#define MAX 10
 
 bool game_preload() 
 {
@@ -70,7 +69,7 @@ void game_update()
 
 void game_render3d()
 {
-    g_engine->ClearScene(D3DCOLOR_RGBA(90,90,90,0));
+    g_engine->ClearScene(D3DCOLOR_RGBA(255,255,255,0));
     g_engine->SetIdentity();
 }
 

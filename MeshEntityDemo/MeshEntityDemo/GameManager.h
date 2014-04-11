@@ -39,8 +39,15 @@ public:
 	GAMESTATE GetGameState() { return gameState; }
 
 	void ChangePlayer(DWORD _time);
+	// Add a player, capped to max of enum
 	void AddPlayer();
+	// Remove a player, minimum 2
 	void RemovePlayer();
+	/* Update function for game manager
+	** Checks time remaining to shoot, and force fire if expired
+	** Checks if all shots have been taken
+	*/ 
+	void Update();
 };
 
 #endif
