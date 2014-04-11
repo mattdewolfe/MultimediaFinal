@@ -1,6 +1,5 @@
 #include "InputController.h"
 
-
 InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
 	angleUpButton(119), 
 	angleDownButton(115), 

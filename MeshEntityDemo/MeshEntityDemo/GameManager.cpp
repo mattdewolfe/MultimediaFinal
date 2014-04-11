@@ -1,12 +1,13 @@
 #include "GameManager.h"
 
 GameManager::GameManager(void) :
-	timePerTurn(3000),
+	timePerTurn(4000),
 	players(2), 
-	gameState(MAIN_MENU)
+	gameState(Advanced2D::MAIN_MENU), 
+	currentShot(1)
 {}
 
-void GameManager::ChangePlayer(DWORD _time)
+void GameManager::ChangePlayer()
 {
 	// Change to next player in order, or back to start
 	if (currentPlayer > players)
@@ -18,24 +19,43 @@ void GameManager::ChangePlayer(DWORD _time)
 	else if (currentPlayer == PLAYER_THREE)
 		currentPlayer = PLAYER_FOUR;
 
-	turnStartTime = _time;
+	turnStartTime = clock.getTimer();
 }
 
 void GameManager::AddPlayer(void)
 {
 	if (players < PLAYERS_MAX)
+	{
 		players++;
+		shotsPerGame = shotsPerTeam * players;
+	}
 }
 void GameManager::RemovePlayer(void)
 {
 	if (players > 2)
+	{
 		players--;
+		shotsPerGame = shotsPerTeam * players;
+	}
 }
 
 void GameManager::Update()
 {
+	// if time is up, force the shot and change player
+	if (turnStartTime + timePerTurn	< clock.getTimer())
+	{
+		// force shot now
+		ChangePlayer();
+	}
+	// if this happens, game be over
+	else if (currentShot > shotsPerGame)
+	{
+		// done and done, say who the winner is and stuff
+		gameState = Advanced2D::GAME_OVER;
+	}
 
 }
+
 GameManager::~GameManager(void)
 {
 }

@@ -64,7 +64,7 @@ bool game_init(HWND)
 
 void game_update() 
 {
-    //nothing to do!
+	gameManager.Update();
 }
 
 void game_render3d()

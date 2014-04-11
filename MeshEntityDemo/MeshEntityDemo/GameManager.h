@@ -2,9 +2,8 @@
 #define GAMEMANAGER_H
 
 #include "..\..\Engine\Advanced2D.h"
-#include "GamePlayStates.h"
 
-class GameManager : public virtual GamePlayStates
+class GameManager
 {
 public:
 	// Enum for the player who is throwing
@@ -13,11 +12,11 @@ public:
 		PLAYER_TWO = 2, 
 		PLAYER_THREE = 3, 
 		PLAYER_FOUR = 4, 
-		PLAYERS_MAX
+		PLAYERS_MAX = 5
 	};
 private:
 	// Stores game state
-	GAMESTATE gameState;
+	Advanced2D::GAMESTATE gameState;
 	// Stores current player
 	CURRENTPLAYER currentPlayer;
 	// Determines how long player have to make their shot (ms)
@@ -26,19 +25,32 @@ private:
 	DWORD turnStartTime;
 	// How many players are in the game
 	int players;
+	// shot tracking vals, store current shot num, shots per team, and total shots per game
+	int currentShot, shotsPerTeam, shotsPerGame;
+	// Timer
+	Advanced2D::Timer clock;
+	
 
 public:
 	GameManager(void);
 	virtual ~GameManager(void);
 	void Update(UINT _val);
-	
+#pragma region Get/Set
 	void SetTimePerTurn(DWORD _time) { timePerTurn = _time; }
 	DWORD GetTimePerTurn() { return timePerTurn; }
 
-	void SetGameState(GAMESTATE _newState) { gameState = _newState; }
-	GAMESTATE GetGameState() { return gameState; }
+	void SetGameState(Advanced2D::GAMESTATE _newState) { gameState = _newState; }
+	Advanced2D::GAMESTATE GetGameState() { return gameState; }
 
-	void ChangePlayer(DWORD _time);
+	void SetTotalShots(int _shots)
+	{ 
+		shotsPerTeam = _shots; 
+		shotsPerGame = shotsPerTeam * players;
+	}
+	int GetTotalShots() { return shotsPerTeam; }
+#pragma endregion Get/Set	
+	// Switch to next player to shoot
+	void ChangePlayer();
 	// Add a player, capped to max of enum
 	void AddPlayer();
 	// Remove a player, minimum 2

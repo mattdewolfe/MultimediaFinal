@@ -9,23 +9,8 @@ void UI::LoadSprites()
 	// load all sprites, and pass into g_engine->addEntity
 }
 
-void UI::DrawVisuals(GAMESTATE _perState)
+void UI::DrawVisuals(Advanced2D::GAMESTATE _perState)
 {
-	switch(_perState)
-	{
-	case MAIN_MENU:
-		break;
-	case GAME_PLAY:
-		break;
-	case PAUSE:
-		break;
-	case SCORING:
-		break;
-	case GAME_OVER:
-		break;
-	default:
-		break;
-	}
 }
 
 UI::~UI(void)

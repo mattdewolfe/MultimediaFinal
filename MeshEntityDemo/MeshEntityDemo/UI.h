@@ -2,17 +2,16 @@
 #define UI_H
 
 #include "..\..\Engine\Advanced2D.h"
-#include "GamePlayStates.h"
 
-class UI : public virtual GamePlayStates
+class UI
 {
 public:
-	Advanced2D::Sprite* visuals[4];
+
 	UI(void);
 	virtual ~UI(void);
 	void Update();
 	void LoadSprites();
-	void DrawVisuals(GAMESTATE _perState);
+	void DrawVisuals(Advanced2D::GAMESTATE _perState);
 };
 #endif
 
