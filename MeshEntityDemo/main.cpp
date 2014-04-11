@@ -45,13 +45,13 @@ bool game_init(HWND)
     light2 = new Light(0, D3DLIGHT_SPOT, pos2, dir2, 500);
     light2->setColor(D3DXCOLOR(0,0,0,0));
 
-    g_engine->SetAmbient(D3DCOLOR_RGBA(1,1,0,0));
+    g_engine->SetAmbient(D3DCOLOR_RGBA(255,255,255,0));
 
     //load meshes
     Mesh *mesh;
 	 mesh = new Mesh();
         mesh->Load("airplane 2.x");
-        mesh->SetScale(3.0f,3.0f,3.0f);
+        mesh->SetScale(1.0f,1.0f,1.0f);
         float x = 1;
         float y = 1;
         float z = -4;
@@ -114,10 +114,10 @@ void game_keyPress(int key)
 	if (key == 27)
 		g_engine->Close();
 }
-void game_mouseButton(int button) { }
-void game_mouseMotion(int x,int y) { }
-void game_mouseMove(int x,int y) { }
-void game_mouseWheel(int wheel) { }
+void game_mouseButton(int button) {}
+void game_mouseMotion(int x,int y) {}
+void game_mouseMove(int x,int y) {}
+void game_mouseWheel(int wheel) {}
 void game_controllerButtonPressed(int index, int button){}
 void game_controllerButtonReleased(int index, int button){}
 void game_controllerButtonDown(int index, int button){}
@@ -125,5 +125,5 @@ void game_controllerLeftTrigger(int index, int value){}
 void game_controllerRightTrigger(int index, int value){}
 void game_controllerThumbLX(int index, float value){}
 void game_controllerThumbLY(int index, float value){}
-void game_controllerThumbRX(int index, float value) { }
-void game_controllerThumbRY(int index, float value) { }
+void game_controllerThumbRX(int index, float value) {}
+void game_controllerThumbRY(int index, float value) {}

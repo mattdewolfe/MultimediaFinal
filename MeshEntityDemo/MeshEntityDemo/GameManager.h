@@ -2,18 +2,12 @@
 #define GAMEMANAGER_H
 
 #include "..\..\Engine\Advanced2D.h"
+#include "GamePlayStates.h"
 
-class GameManager
+class GameManager : public virtual GamePlayStates
 {
 public:
-	enum GAMESTATE {
-		MAIN_MENU, 
-		GAME_PLAY, 
-		PAUSE, 
-		SCORING, 
-		GAME_OVER,
-		GAME_STATE_MAX
-	};
+	// Enum for the player who is throwing
 	enum CURRENTPLAYER {
 		PLAYER_ONE = 1, 
 		PLAYER_TWO = 2, 
@@ -22,9 +16,9 @@ public:
 		PLAYERS_MAX
 	};
 private:
-	// Store game state
+	// Stores game state
 	GAMESTATE gameState;
-	// Stores current player for shot purposes
+	// Stores current player
 	CURRENTPLAYER currentPlayer;
 	// Determines how long player have to make their shot (ms)
 	DWORD timePerTurn;
@@ -41,11 +35,8 @@ public:
 	void SetTimePerTurn(DWORD _time) { timePerTurn = _time; }
 	DWORD GetTimePerTurn() { return timePerTurn; }
 
-	GAMESTATE GetGameState() { return gameState; }
 	void SetGameState(GAMESTATE _newState) { gameState = _newState; }
-
-	CURRENTPLAYER GetCurrentPlayer() { return currentPlayer; }
-	void SetGameState(CURRENTPLAYER _newPlayer) { currentPlayer = _newPlayer; }
+	GAMESTATE GetGameState() { return gameState; }
 
 	void ChangePlayer(DWORD _time);
 	void AddPlayer();

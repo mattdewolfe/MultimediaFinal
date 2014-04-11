@@ -2,9 +2,9 @@
 
 GameManager::GameManager(void) :
 	timePerTurn(3000),
-	players(2)
-{
-}
+	players(2), 
+	gameState(MAIN_MENU)
+{}
 
 void GameManager::ChangePlayer(DWORD _time)
 {
