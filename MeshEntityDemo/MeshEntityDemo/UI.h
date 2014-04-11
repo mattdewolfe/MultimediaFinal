@@ -6,12 +6,11 @@
 class UI
 {
 public:
-
 	UI(void);
 	virtual ~UI(void);
-	void Update();
+	void UpdateAngle(float _angle);
 	void LoadSprites();
-	void DrawVisuals(Advanced2D::GAMESTATE _perState);
+	void UpdateVisuals(Advanced2D::GAMESTATE _perState);
 };
 #endif
 

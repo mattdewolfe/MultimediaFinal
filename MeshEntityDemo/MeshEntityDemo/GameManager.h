@@ -2,7 +2,7 @@
 #define GAMEMANAGER_H
 
 #include "..\..\Engine\Advanced2D.h"
-
+#include "UI.h"
 class GameManager
 {
 public:
@@ -29,7 +29,8 @@ private:
 	int currentShot, shotsPerTeam, shotsPerGame;
 	// Timer
 	Advanced2D::Timer clock;
-	
+	// 2d sprite visual handler
+	UI* ui;
 
 public:
 	GameManager(void);
@@ -39,7 +40,11 @@ public:
 	void SetTimePerTurn(DWORD _time) { timePerTurn = _time; }
 	DWORD GetTimePerTurn() { return timePerTurn; }
 
-	void SetGameState(Advanced2D::GAMESTATE _newState) { gameState = _newState; }
+	void SetGameState(Advanced2D::GAMESTATE _newState) 
+	{ 
+		gameState = _newState; 
+		ui->UpdateVisuals(gameState);
+	}
 	Advanced2D::GAMESTATE GetGameState() { return gameState; }
 
 	void SetTotalShots(int _shots)

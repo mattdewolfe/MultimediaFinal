@@ -12,6 +12,8 @@ private:
 	float shotPower;
 	// Store button ints for a given controller
 	int angleUpButton, angleDownButton, shootButton;
+	bool bAngleUp, bAngleDown, bShoot;
+
 // Functions
 public:
 	InputController(int _angleUp, int _angleDown, int _shoot);
@@ -25,6 +27,13 @@ public:
 
 	void SetShootBtn(int _new) { shootButton = _new; }
 	int GetShootBtn() { return shootButton; }
+	
+	void ButtonPress(int _key);
+	void ButtonRelease(int _key);
+	
+	bool CheckAngleUp() { return bAngleUp; }
+	bool CheckAngleDown() { return bAngleDown; }
+	bool CheckFire() { return bShoot; }
 };
 #endif
 

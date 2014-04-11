@@ -3,9 +3,15 @@
 GameManager::GameManager(void) :
 	timePerTurn(4000),
 	players(2), 
-	gameState(Advanced2D::MAIN_MENU), 
-	currentShot(1)
-{}
+	gameState(Advanced2D::MAIN_MENU),
+	currentShot(1),
+	shotsPerTeam(4), 
+	shotsPerGame(8)
+{
+	ui = new UI();
+	ui->LoadSprites();
+	ui->UpdateVisuals(gameState);
+}
 
 void GameManager::ChangePlayer()
 {

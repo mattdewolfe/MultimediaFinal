@@ -8,7 +8,7 @@ Camera *camera;
 Camera *camera2;
 Light *light;
 Light *light2;
-GameManager gameManager;
+GameManager *gameManager;
 
 bool game_preload() 
 {
@@ -45,7 +45,9 @@ bool game_init(HWND)
     light2->setColor(D3DXCOLOR(0,0,0,0));
 
     g_engine->SetAmbient(D3DCOLOR_RGBA(255,255,255,0));
-
+	
+	// Setup custom classes
+	gameManager = new GameManager();
     //load meshes
     Mesh *mesh;
 	 mesh = new Mesh();
@@ -64,7 +66,7 @@ bool game_init(HWND)
 
 void game_update() 
 {
-	gameManager.Update();
+	gameManager->Update();
 }
 
 void game_render3d()
@@ -73,10 +75,7 @@ void game_render3d()
     g_engine->SetIdentity();
 }
 
-void game_keyRelease(int key) 
-{ 
-    if (key == DIK_ESCAPE) g_engine->Close();
-}
+void game_keyRelease(int key) {}
 
 void game_entityUpdate(Advanced2D::Entity* entity) 
 { 
@@ -110,8 +109,11 @@ void game_end()
 void game_render2d() { }
 void game_keyPress(int key) 
 {
-	if (key == 27)
+	if (key == DIK_ESCAPE)
 		g_engine->Close();
+	if (key == DIK_RETURN)
+		if (gameManager->GetGameState() == Advanced2D::MAIN_MENU)
+			gameManager->SetGameState(Advanced2D::GAME_PLAY);
 }
 void game_mouseButton(int button) {}
 void game_mouseMotion(int x,int y) {}

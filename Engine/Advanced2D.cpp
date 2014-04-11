@@ -508,7 +508,7 @@ namespace Advanced2D
                 if ( entity->getRenderType() == RENDER2D ) {
 
                     //is this entity in use?
-                    if ( entity->getVisible() ) {
+                    if ( entity->getVisible() == true) {
                         entity->draw();
                         game_entityRender( entity );
                     }
