@@ -1,9 +1,9 @@
 #include "InputController.h"
 
 InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
-	angleUpButton(119), 
-	angleDownButton(115), 
-	shootButton(32), 
+	angleUpButton(DIK_W), 
+	angleDownButton(DIK_S), 
+	shootButton(DIK_SPACE), 
 	bShoot(false), 
 	bAngleUp(false), 
 	bAngleDown(false)

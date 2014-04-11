@@ -3,6 +3,8 @@
 
 #include "..\..\Engine\Advanced2D.h"
 #include "UI.h"
+#include "InputController.h"
+
 class GameManager
 {
 public:
@@ -14,6 +16,7 @@ public:
 		PLAYER_FOUR = 4, 
 		PLAYERS_MAX = 5
 	};
+	bool cameraOne;
 private:
 	// Stores game state
 	Advanced2D::GAMESTATE gameState;
@@ -53,6 +56,8 @@ public:
 		shotsPerGame = shotsPerTeam * players;
 	}
 	int GetTotalShots() { return shotsPerTeam; }
+
+	int GetCurrentPlayer() { return currentPlayer; }
 #pragma endregion Get/Set	
 	// Switch to next player to shoot
 	void ChangePlayer();
@@ -65,6 +70,7 @@ public:
 	** Checks if all shots have been taken
 	*/ 
 	void Update();
+	void InitObjects();
 };
 
 #endif

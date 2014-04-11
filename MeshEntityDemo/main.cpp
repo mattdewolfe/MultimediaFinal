@@ -1,18 +1,22 @@
 #include "..\Engine\Advanced2D.h"
 #include "GameManager.h"
+#include "InputController.h"
 
 using namespace Advanced2D;
 
 //camera object
-Camera *camera;
+Camera *camera1;
 Camera *camera2;
 Light *light;
 Light *light2;
 GameManager *gameManager;
+// Input controllers for each player
+InputController* inputs[GameManager::PLAYERS_MAX];
+void ToggleCamera();
 
 bool game_preload() 
 {
-    g_engine->setAppTitle("Hole in Ball");
+    g_engine->setAppTitle("Planar");
     g_engine->setFullscreen(false);
     g_engine->setScreenWidth(1600);
     g_engine->setScreenHeight(900);
@@ -23,10 +27,10 @@ bool game_preload()
 bool game_init(HWND) 
 {
     //set the camera and perspective
-    camera = new Camera();
-    camera->setPosition(0.0f, 2.0f, 100.0f);
-    camera->setTarget(0.0f, 0.0f, 0.0f);
-    camera->Update();
+    camera1 = new Camera();
+    camera1->setPosition(60.0f, 25.0f, -100.0f);
+    camera1->setTarget(-20.0f, 10.0f, 0.0f);
+    camera1->Update();
 	camera2 = new Camera();
     camera2->setPosition(0.0f, 2.0f, -100.0f);
     camera2->setTarget(0.0f, 0.0f, 0.0f);
@@ -48,19 +52,11 @@ bool game_init(HWND)
 	
 	// Setup custom classes
 	gameManager = new GameManager();
-    //load meshes
-    Mesh *mesh;
-	 mesh = new Mesh();
-        mesh->Load("airplane 2.x");
-        mesh->SetScale(1.0f,1.0f,1.0f);
-        float x = 1;
-        float y = 1;
-        float z = -4;
-        mesh->SetPosition(x,y,z);
-
-        //add mesh to entity manager
-        g_engine->addEntity(mesh);
-
+	for (int i = 0; i < GameManager::PLAYERS_MAX; i++)
+	{
+		inputs[i] = new InputController(DIK_W, DIK_S, DIK_SPACE);
+	}
+   
     return 1;
 }
 
@@ -71,11 +67,36 @@ void game_update()
 
 void game_render3d()
 {
-    g_engine->ClearScene(D3DCOLOR_RGBA(255,255,255,0));
+    g_engine->ClearScene(D3DCOLOR_RGBA(150,150,150,0));
     g_engine->SetIdentity();
 }
 
-void game_keyRelease(int key) {}
+void game_keyRelease(int key) 
+{
+	if (key == DIK_T)
+		ToggleCamera();
+	
+	inputs[(int)gameManager->GetCurrentPlayer()]->ButtonRelease(key);
+}
+void game_keyPress(int key) 
+{
+	if (key == DIK_ESCAPE)
+	{
+		g_engine->Close();
+	}
+	else if (key == DIK_RETURN)
+	{
+		if (gameManager->GetGameState() == Advanced2D::MAIN_MENU)
+		{
+			gameManager->SetGameState(Advanced2D::GAME_PLAY);
+		}
+	}
+	else
+	{
+		inputs[(int)gameManager->GetCurrentPlayer()]->ButtonPress(key);
+	}
+
+}
 
 void game_entityUpdate(Advanced2D::Entity* entity) 
 { 
@@ -101,20 +122,25 @@ void game_entityRender(Advanced2D::Entity* entity)
 
 void game_end() 
 {
-    delete camera;
+    delete camera1;
 	delete camera2;
     delete light;
 }
-
-void game_render2d() { }
-void game_keyPress(int key) 
+void ToggleCamera()
 {
-	if (key == DIK_ESCAPE)
-		g_engine->Close();
-	if (key == DIK_RETURN)
-		if (gameManager->GetGameState() == Advanced2D::MAIN_MENU)
-			gameManager->SetGameState(Advanced2D::GAME_PLAY);
+	if (gameManager->cameraOne == true)
+	{
+		gameManager->cameraOne = false;
+		camera2->Update();
+	}
+	else 
+	{
+		gameManager->cameraOne = true;
+		camera1->Update();
+	}
 }
+void game_render2d() {}
+
 void game_mouseButton(int button) {}
 void game_mouseMotion(int x,int y) {}
 void game_mouseMove(int x,int y) {}

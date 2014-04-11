@@ -1,5 +1,8 @@
 #ifndef INPUTCONTROLLER_H
 #define INPUTCONTROLLER_H
+
+#include "..\..\Engine\Advanced2D.h"
+
 class InputController
 {
 // Variables
