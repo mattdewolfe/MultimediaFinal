@@ -21,9 +21,6 @@ GameManager::GameManager() :
 	{
 		inputs[i] = new InputController();
 	}
-	inputs[1]->SetAngleDownBtn(DIK_DOWNARROW);
-	inputs[1]->SetAngleDownBtn(DIK_UPARROW);
-	inputs[1]->SetShootBtn(DIK_L);
 	InitObjects();
 }
 
@@ -118,6 +115,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -12, 5);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
 	// target at the end of the board
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("target");
@@ -125,6 +123,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -10, 80);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
 	// play board
 	terrain = new Advanced2D::Mesh();
 	terrain->Load("ball.x");
@@ -133,6 +132,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -10, 0);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
 	// left bumper
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("bumper");
@@ -140,6 +140,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(-20, -8, 0);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
 	// right bumper
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("bumper");
@@ -147,6 +148,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(20, -8, 0);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+	
 	// rear bumper
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("bumper");
@@ -154,6 +156,7 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -8, 100);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
 	// front bumper
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("bumper");
@@ -161,7 +164,8 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -8, -100);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
-	// middle bumbper
+	
+	// mid-map obstacle
 	terrain = new Advanced2D::Mesh();
 	terrain->setName("bumper");
 	terrain->CreateCube(10.0f, 10.0f, 5.0f);
