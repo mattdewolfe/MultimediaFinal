@@ -10,8 +10,7 @@ Camera *camera2;
 Light *light;
 Light *light2;
 GameManager *gameManager;
-// Input controllers for each player
-InputController* inputs[GameManager::PLAYERS_MAX];
+
 void ToggleCamera();
 int updateDelay = 0;
 
@@ -49,31 +48,19 @@ bool game_init(HWND)
     light2 = new Light(0, D3DLIGHT_POINT, pos2, dir2, 500);
     light2->setColor(D3DXCOLOR(0,255,0,0));
 
-//    g_engine->SetAmbient(D3DCOLOR_RGBA(255,255,255,0));
+//  g_engine->SetAmbient(D3DCOLOR_RGBA(255,255,255,0));
 	
 	// Setup custom classes
 	gameManager = new GameManager();
-	for (int i = 0; i < GameManager::PLAYERS_MAX; i++)
-	{
-		inputs[i] = new InputController(DIK_W, DIK_S, DIK_SPACE);
-	}
-   
+  
     return 1;
 }
 
 void game_update() 
 {
-	if (updateDelay%50 == 0)
-	{
-		gameManager->Update();
-		if(inputs[gameManager->GetCurrentPlayer()]->CheckFire() == true && 
-			gameManager->GetGameState() == GAME_PLAY)
-		{
-			// fire shot
-			inputs[gameManager->GetCurrentPlayer()]->SetFireFalse();
-			gameManager->FireShot();
-		}
-	}
+	gameManager->Update();
+	
+	// use to slow game update calls if needed
 	updateDelay++;
 	if (updateDelay > 51)
 		updateDelay = 0;
@@ -85,37 +72,14 @@ void game_keyRelease(int key)
 	{
 		ToggleCamera();
 	}
-	else if (key == DIK_ESCAPE)
-	{
-		g_engine->Close();
-	}
-	else if (key == DIK_RETURN)
-	{
-		if (gameManager->GetGameState() == Advanced2D::MAIN_MENU)
-		{
-			gameManager->SetGameState(Advanced2D::GAME_PLAY);
-			gameManager->SetupShot();
-		}
-		else if (gameManager->GetGameState() == Advanced2D::GAME_PLAY)
-		{
-			gameManager->SetGameState(Advanced2D::PAUSE);
-		}
-		else if (gameManager->GetGameState() == Advanced2D::PAUSE)
-		{
-			gameManager->SetGameState(Advanced2D::GAME_PLAY);
-		}
-		else if (gameManager->GetGameState() == Advanced2D::GAME_OVER)
-		{
-			gameManager->SetGameState(Advanced2D::MAIN_MENU);
-		}
-	}
-
-	inputs[(int)gameManager->GetCurrentPlayer()]->ButtonRelease(key);
+	else
+		gameManager->PassKeyReleaseInput(key);
 }
 
 void game_keyPress(int key) 
 {
-	inputs[gameManager->GetCurrentPlayer()]->ButtonPress(key);
+	if (key != DIK_ESCAPE && key != DIK_T && key != DIK_RETURN)
+		gameManager->PassKeyPressInput(key);
 }
 
 void game_entityUpdate(Advanced2D::Entity* entity) 
@@ -145,6 +109,7 @@ void game_end()
     delete camera1;
 	delete camera2;
     delete light;
+	delete light2;
 }
 
 void ToggleCamera()
@@ -171,8 +136,14 @@ void game_mouseButton(int button) {}
 void game_mouseMotion(int x,int y) {}
 void game_mouseMove(int x,int y) {}
 void game_mouseWheel(int wheel) {}
-void game_controllerButtonPressed(int index, int button){}
-void game_controllerButtonReleased(int index, int button){}
+void game_controllerButtonPressed(int index, int button)
+{
+	gameManager->PassKeyPressInput(button);
+}
+void game_controllerButtonReleased(int index, int button)
+{
+	gameManager->PassKeyReleaseInput(button);
+}
 void game_controllerButtonDown(int index, int button){}
 void game_controllerLeftTrigger(int index, int value){}
 void game_controllerRightTrigger(int index, int value){}

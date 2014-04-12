@@ -15,29 +15,30 @@ private:
 	float shotPower;
 	// Store button ints for a given controller
 	int angleUpButton, angleDownButton, shootButton;
-	bool bAngleUp, bAngleDown, bShoot;
+	bool bShoot;
 
 // Functions
 public:
-	InputController(int _angleUp, int _angleDown, int _shoot);
+	InputController(int _angleUp = DIK_W, int _angleDown = DIK_S, int _shoot = DIK_SPACE);
 	virtual ~InputController(void);
 
-	void SetAngleUpBtn(int _new) { angleUpButton = _new; }
-	int GetAngleUpBtn() { return angleUpButton; }
-
-	void SetAngleDownBtn(int _new) { angleDownButton = _new; }
-	int GetAngleDownBtn() { return angleDownButton; }
-
-	void SetShootBtn(int _new) { shootButton = _new; }
-	int GetShootBtn() { return shootButton; }
-	
 	void ButtonPress(int _key);
 	void ButtonRelease(int _key);
-	
-	bool CheckAngleUp() { return bAngleUp; }
-	bool CheckAngleDown() { return bAngleDown; }
 	bool CheckFire() { return bShoot; }
+
+#pragma region Get/Set
+	bool SetAngleUpBtn(int _new);
+	int GetAngleUpBtn() { return angleUpButton; }
+
+	bool SetAngleDownBtn(int _new);
+	int GetAngleDownBtn() { return angleDownButton; }
+
+	bool SetShootBtn(int _new);
+	int GetShootBtn() { return shootButton; }
+	
+	float GetShotAngle() { return shotAngle; }
 	void SetFireFalse () { bShoot = false; }
+#pragma endregion Get/Set
 };
 #endif
 

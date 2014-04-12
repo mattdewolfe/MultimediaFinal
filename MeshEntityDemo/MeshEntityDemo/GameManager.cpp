@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-GameManager::GameManager(void) :
+GameManager::GameManager() :
 	timePerTurn(4000),
 	roundDelay(1000),
 	players(2), 
@@ -9,12 +9,21 @@ GameManager::GameManager(void) :
 	shotsPerTeam(3), 
 	shotsPerGame(9), 
 	cameraOne(false),
-	currentPlayer(PLAYER_ONE)
+	currentPlayer(PLAYER_ONE), 
+	autoShotAngle(0)
 {
+	// load UI Sprites
 	ui = new UI();
 	ui->LoadSprites();
 	ui->UpdateVisuals(gameState);
-	// setup objects for each team
+	// Setup input controllers
+	for (int i = 0; i < GameManager::PLAYERS_MAX; i++)
+	{
+		inputs[i] = new InputController();
+	}
+	inputs[1]->SetAngleDownBtn(DIK_DOWNARROW);
+	inputs[1]->SetAngleDownBtn(DIK_UPARROW);
+	inputs[1]->SetShootBtn(DIK_L);
 	InitObjects();
 }
 
@@ -43,19 +52,23 @@ void GameManager::Update()
 			if (turnStartTime + roundDelay < clock.getTimer())
 			{
 				turnStartTime = clock.getTimer();
-				gameState = Advanced2D::GAME_PLAY;
+				SetGameState(Advanced2D::GAME_PLAY);
 			}
 			break;
 		case Advanced2D::GAME_PLAY:
-			if (turnStartTime + timePerTurn	< clock.getTimer())
+			if (inputs[currentPlayer]->CheckFire() == true)
 			{
-				FireShot();
+				FireShot(inputs[currentPlayer]->GetShotAngle());
+			}
+			else if (turnStartTime + timePerTurn < clock.getTimer())
+			{
+				FireShot(inputs[currentPlayer]->GetShotAngle());
 			}
 			// if this happens, game be over
 			if (currentShot * shotsPerTeam > shotsPerGame)
 			{
 				// done and done, say who the winner is and stuff
-				gameState = Advanced2D::GAME_OVER;
+				SetGameState(Advanced2D::GAME_OVER);
 			}
 			break;
 		case Advanced2D::GAME_OVER:
@@ -157,10 +170,13 @@ void GameManager::InitObjects()
 	g_engine->addEntity(terrain);
 }
 
-void GameManager::FireShot()
+void GameManager::FireShot(float _angle)
 {
-	rocks[currentPlayer][currentShot - 1]->SetVelocity(0.0f, 0.0f, 0.01f);
-	gameState = Advanced2D::NEXT_SHOT;
+	// calc shot angle from input controller
+	float x = _angle;
+	// calculate z and x values based on power/angle
+	rocks[currentPlayer][currentShot - 1]->SetVelocity(x, 0.0f, 0.01f);
+	SetGameState(Advanced2D::NEXT_SHOT);
 	ChangePlayer();
 	turnStartTime = clock.getTimer();
 }
@@ -168,7 +184,7 @@ void GameManager::FireShot()
 void GameManager::Reset()
 {
 	players = 2; 
-	gameState = Advanced2D::MAIN_MENU;
+	SetGameState(Advanced2D::MAIN_MENU);
 	currentShot = 1;
 	cameraOne = false;
 	currentPlayer = PLAYER_ONE;
@@ -177,6 +193,48 @@ void GameManager::Reset()
 void GameManager::SetupShot()
 {
 	rocks[currentPlayer][currentShot - 1]->SetPosition(0.0f, -6.0f, -85.0f);
+}
+
+void GameManager::PassKeyPressInput(int _key)
+{
+	// only the input controller should be watching for key down
+	inputs[currentPlayer]->ButtonPress(_key);
+}
+
+void GameManager::PassKeyReleaseInput(int _key)
+{
+	// if escape is pressed, the game closes
+	if (_key == DIK_ESCAPE)
+	{
+		g_engine->Close();
+	}
+	// if enter is pressed, check state and proceed to next gameplay state
+	// or pause/unpause the game
+	if (_key == DIK_RETURN)
+	{
+		if (gameState == Advanced2D::MAIN_MENU)
+		{
+			SetGameState(Advanced2D::GAME_PLAY);
+			SetupShot();
+		}
+		else if (gameState == Advanced2D::GAME_PLAY)
+		{
+			SetGameState(Advanced2D::PAUSE);
+		}
+		else if (gameState == Advanced2D::PAUSE)
+		{
+			SetGameState(Advanced2D::GAME_PLAY);
+		}
+		else if (gameState == Advanced2D::GAME_OVER)
+		{
+			Reset();
+		}
+	}
+	else
+	{
+		// otherwise pass input onto current controller
+		inputs[currentPlayer]->ButtonRelease(_key);
+	}
 }
 
 GameManager::~GameManager(void)

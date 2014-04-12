@@ -1,12 +1,9 @@
 #include "InputController.h"
 
 InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
-	angleUpButton(DIK_W), 
-	angleDownButton(DIK_S), 
-	shootButton(DIK_SPACE), 
-	bShoot(false), 
-	bAngleUp(false), 
-	bAngleDown(false)
+	angleCap(0.01),
+	shotAngle(0),
+	bShoot(false)
 {
 	angleUpButton = _angleUp;
 	angleDownButton = _angleDown;
@@ -16,21 +13,58 @@ InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
 void InputController::ButtonPress(int _key)
 {
 	if (_key == angleUpButton)
-		bAngleUp = true;
+	{
+		if (shotAngle < angleCap)
+			shotAngle += 0.005f;
+	}
 	else if (_key == angleDownButton)
-		bAngleDown = true;
+	{
+		if (shotAngle > -angleCap)
+			shotAngle -= 0.005f;
+	}
 	else if (_key == shootButton)
 		bShoot = true;
 }
+
 void InputController::ButtonRelease(int _key)
 {
-	if (_key == angleUpButton)
-		bAngleUp = false;
-	else if (_key == angleDownButton)
-		bAngleDown = false;
-	else if (_key == shootButton)
+	if (_key == shootButton)
 		bShoot = false;
 }
+
+bool InputController::SetAngleUpBtn(int _new)
+{
+	// Ensure new button is not one used by gameManager
+	if (_new != DIK_ESCAPE && _new != DIK_T && _new != DIK_RETURN)
+	{
+		angleUpButton = _new; 
+		return true;
+	}
+	return false;
+}
+
+bool InputController::SetAngleDownBtn(int _new)
+{
+	// Ensure new button is not one used by gameManager
+	if (_new != DIK_ESCAPE && _new != DIK_T && _new != DIK_RETURN)
+	{
+		angleDownButton = _new; 
+		return true;
+	}
+	return false;
+}
+
+bool InputController::SetShootBtn(int _new)
+{
+	// Ensure new button is not one used by gameManager
+	if (_new != DIK_ESCAPE && _new != DIK_T && _new != DIK_RETURN)
+	{
+		shootButton = _new; 
+		return true;
+	}
+	return false;
+}
+
 InputController::~InputController(void)
 {
 }

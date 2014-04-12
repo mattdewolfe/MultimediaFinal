@@ -15,8 +15,10 @@ public:
 		PLAYERS_MAX = 2
 	};
 	bool cameraOne;
+	float autoShotAngle;
 private:
-	// Stores game state
+	// Game state - Do not change with =, only with SetGameState function
+	// otherwise sprite drawStates will not be checked
 	Advanced2D::GAMESTATE gameState;
 	// Stores current player
 	CURRENTPLAYER currentPlayer;
@@ -34,12 +36,15 @@ private:
 	UI* ui;
 	// Local list of entities for team rocks
 	Advanced2D::Mesh* rocks[PLAYERS_MAX][4]; 
+	// copy of input pointers stored here for reference
+	InputController* inputs[PLAYERS_MAX];
 
 public:
-	GameManager(void);
+	GameManager();
 	virtual ~GameManager(void);
-	void Update(UINT _val);
+
 #pragma region Get/Set
+	
 	void SetTimePerTurn(DWORD _time) { timePerTurn = _time; }
 	DWORD GetTimePerTurn() { return timePerTurn; }
 
@@ -60,6 +65,7 @@ public:
 	int GetCurrentPlayer() { return (int)currentPlayer; }
 
 #pragma endregion Get/Set	
+
 	// Switch to next player to shoot
 	void ChangePlayer();
 	/* Update function for game manager
@@ -67,10 +73,17 @@ public:
 	** Checks if all shots have been taken
 	*/ 
 	void Update();
+	// load in meshes
 	void InitObjects();
-	void FireShot();
+	// fire the current object, with parameters from input
+	void FireShot(float _angle);
+	// reset all game elements
 	void Reset();
+	// setup next shot by moving object into position
 	void SetupShot();
+	// pass input from main loop into manager
+	void PassKeyPressInput(int _key);
+	void PassKeyReleaseInput(int _key);
 };
 
 #endif
