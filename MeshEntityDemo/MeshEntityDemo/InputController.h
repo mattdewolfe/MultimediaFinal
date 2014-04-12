@@ -37,6 +37,7 @@ public:
 	bool CheckAngleUp() { return bAngleUp; }
 	bool CheckAngleDown() { return bAngleDown; }
 	bool CheckFire() { return bShoot; }
+	void SetFireFalse () { bShoot = false; }
 };
 #endif
 

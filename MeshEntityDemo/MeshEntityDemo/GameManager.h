@@ -10,11 +10,9 @@ class GameManager
 public:
 	// Enum for the player who is throwing
 	enum CURRENTPLAYER {
-		PLAYER_ONE = 1, 
-		PLAYER_TWO = 2, 
-		PLAYER_THREE = 3, 
-		PLAYER_FOUR = 4, 
-		PLAYERS_MAX = 5
+		PLAYER_ONE = 0, 
+		PLAYER_TWO = 1, 
+		PLAYERS_MAX = 2
 	};
 	bool cameraOne;
 private:
@@ -29,11 +27,13 @@ private:
 	// How many players are in the game
 	int players;
 	// shot tracking vals, store current shot num, shots per team, and total shots per game
-	int currentShot, shotsPerTeam, shotsPerGame;
+	int currentShot, shotsPerTeam, shotsPerGame, roundDelay;
 	// Timer
 	Advanced2D::Timer clock;
 	// 2d sprite visual handler
 	UI* ui;
+	// Local list of entities for team rocks
+	Advanced2D::Mesh* rocks[PLAYERS_MAX][4]; 
 
 public:
 	GameManager(void);
@@ -57,20 +57,20 @@ public:
 	}
 	int GetTotalShots() { return shotsPerTeam; }
 
-	int GetCurrentPlayer() { return currentPlayer; }
+	int GetCurrentPlayer() { return (int)currentPlayer; }
+
 #pragma endregion Get/Set	
 	// Switch to next player to shoot
 	void ChangePlayer();
-	// Add a player, capped to max of enum
-	void AddPlayer();
-	// Remove a player, minimum 2
-	void RemovePlayer();
 	/* Update function for game manager
 	** Checks time remaining to shoot, and force fire if expired
 	** Checks if all shots have been taken
 	*/ 
 	void Update();
 	void InitObjects();
+	void FireShot();
+	void Reset();
+	void SetupShot();
 };
 
 #endif

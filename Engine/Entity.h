@@ -13,6 +13,7 @@ namespace Advanced2D {
 	enum GAMESTATE {
 		MAIN_MENU,
 		GAME_PLAY,
+		NEXT_SHOT,
 		PAUSE,
 		SCORING,
 		GAME_OVER,
