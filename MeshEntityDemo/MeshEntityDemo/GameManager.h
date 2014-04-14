@@ -1,6 +1,6 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
-
+#define ROUNDSPERGAME 3
 #include "..\..\Engine\Advanced2D.h"
 #include "InputController.h"
 #include "Menu.h"
@@ -17,6 +17,9 @@ public:
 	};
 	bool cameraOne;
 	float autoShotAngle;
+	// player scores array, 1 for each round and 1 for total
+	int scores[ROUNDSPERGAME + 1][PLAYERS_MAX];
+
 private:
 	// Game state - Do not change with =, only with SetGameState function
 	// otherwise sprite drawStates will not be checked
@@ -41,6 +44,8 @@ private:
 	Advanced2D::Mesh* rocks[PLAYERS_MAX][4]; 
 	// copy of input pointers stored here for reference
 	InputController* inputs[PLAYERS_MAX];
+	// store the current round for array index (0 -> 2)
+	int currentRound;
 
 public:
 	GameManager();
@@ -90,6 +95,10 @@ public:
 	// pass input from main loop into manager
 	void PassKeyPressInput(int _key);
 	void PassKeyReleaseInput(int _key);
+	// Award a random number of points (1-5) to the specified team
+	void AwardPoints(int _team);
+	// Calculate the winning team
+	CURRENTPLAYER CalculateWinner();
 };
 
 #endif

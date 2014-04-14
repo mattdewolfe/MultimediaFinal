@@ -139,7 +139,13 @@ void game_render3d()
     g_engine->ClearScene(D3DCOLOR_RGBA(150,150,150,0));
     g_engine->SetIdentity();
 }
-void game_render2d() {}
+
+void game_render2d() 
+{
+	gameManager->drawHUD();
+	gameManager->drawMenu();
+}
+
 void game_mouseButton(int button) {}
 void game_mouseMotion(int x,int y) {}
 void game_mouseMove(int x,int y) {}

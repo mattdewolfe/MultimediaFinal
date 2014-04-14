@@ -11,7 +11,8 @@ GameManager::GameManager() :
 	shotsPerGame(9), 
 	cameraOne(false),
 	currentPlayer(PLAYER_ONE), 
-	autoShotAngle(0)
+	autoShotAngle(0), 
+	currentRound(0)
 {
 	// init the hud
 	hud = new HUD();
@@ -20,6 +21,10 @@ GameManager::GameManager() :
 	for (int i = 0; i < GameManager::PLAYERS_MAX; i++)
 	{
 		inputs[i] = new InputController();
+		scores[0][i] = 0;
+		scores[1][i] = 0;
+		scores[2][i] = 0;
+		scores[3][i] = 0;
 	}
 	InitObjects();
 }
@@ -308,6 +313,14 @@ void GameManager::Reset()
 	currentShot = 1;
 	cameraOne = false;
 	currentPlayer = PLAYER_ONE;
+	currentRound = 0;
+	for (int i = 0; i < PLAYERS_MAX; i++)
+	{
+		scores[0][i] = 0;
+		scores[1][i] = 0;
+		scores[2][i] = 0;
+		scores[3][i] = 0;
+	}
 }
 
 void GameManager::SetupShot()
@@ -368,6 +381,64 @@ void GameManager::PassKeyReleaseInput(int _key)
 			inputs[PLAYER_TWO]->ButtonRelease(_key, gameState, pauseMenu);
 		}
 	}
+}
+
+void GameManager::drawMenu()
+{
+	switch (gameState)
+	{
+	case Advanced2D::MAIN_MENU:
+		mainMenu->show();
+		break;
+	case Advanced2D::PAUSE:
+		pauseMenu->show();
+		break;
+	}
+}
+
+void GameManager::drawHUD()
+{
+	if (gameState == Advanced2D::GAME_PLAY)
+		hud->show(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower(), ((timePerTurn + turnStartTime - clock.getTimer()) / 1000) + 1);
+}
+
+void GameManager::AwardPoints(int _team)
+{
+	int points = rand()%5;
+	scores[currentRound][_team] += points;
+}
+
+GameManager::CURRENTPLAYER GameManager::CalculateWinner()
+{
+	// First sum all points
+	for (int i = 0; i < PLAYERS_MAX; i++)
+	{
+		for (int j = 0; j < ROUNDSPERGAME; j++)
+		{
+			scores[ROUNDSPERGAME][i] += scores[j][i];
+		}
+	}
+	// Next determine highest
+	int winner = 0;
+	for (int i = 1; i < PLAYERS_MAX; i++)
+	{
+		if (scores[ROUNDSPERGAME][i] > scores[ROUNDSPERGAME][winner])
+			winner = i;
+	}
+	
+	// Double check that there is no ties
+	bool tie = false;
+	for (int i = 0; i < PLAYERS_MAX; i++)
+	{
+		if (scores[ROUNDSPERGAME][i] == scores[ROUNDSPERGAME][winner])
+			tie = true;
+	}
+	// if there was no tie, return the winner
+	if (tie == false)
+		return (CURRENTPLAYER)winner;
+	// otherwise return enumerator max to flag a tie
+	else
+		return PLAYERS_MAX;
 }
 
 GameManager::~GameManager(void)
