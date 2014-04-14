@@ -15,8 +15,10 @@ namespace Advanced2D {
 		GAME_PLAY,
 		NEXT_SHOT,
 		PAUSE,
+		HELP,
 		SCORING,
 		GAME_OVER,
+		EXITING,
 		GAME_STATE_MAX
 	};
 

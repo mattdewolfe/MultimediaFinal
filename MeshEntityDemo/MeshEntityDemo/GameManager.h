@@ -2,8 +2,9 @@
 #define GAMEMANAGER_H
 
 #include "..\..\Engine\Advanced2D.h"
-#include "UI.h"
 #include "InputController.h"
+#include "Menu.h"
+#include "HUD.h"
 
 class GameManager
 {
@@ -29,11 +30,13 @@ private:
 	// How many players are in the game
 	int players;
 	// shot tracking vals, store current shot num, shots per team, and total shots per game
-	int currentShot, shotsPerTeam, shotsPerGame, roundDelay;
+	int currentShot, shotsPerTeam, shotsPerGame, roundDelay,  powerIncrementalTimer;
 	// Timer
 	Advanced2D::Timer clock;
-	// 2d sprite visual handler
-	UI* ui;
+	// hud class
+	HUD* hud;
+	Menu* mainMenu;
+	Menu* pauseMenu;
 	// Local list of entities for team rocks
 	Advanced2D::Mesh* rocks[PLAYERS_MAX][4]; 
 	// copy of input pointers stored here for reference
@@ -41,6 +44,9 @@ private:
 
 public:
 	GameManager();
+	void drawMenu();
+	void drawHUD();
+	void UpdateVisuals(Advanced2D::GAMESTATE _perState);
 	virtual ~GameManager(void);
 
 #pragma region Get/Set
@@ -51,7 +57,7 @@ public:
 	void SetGameState(Advanced2D::GAMESTATE _newState) 
 	{ 
 		gameState = _newState; 
-		ui->UpdateVisuals(gameState);
+		UpdateVisuals(gameState);
 	}
 	Advanced2D::GAMESTATE GetGameState() { return gameState; }
 
@@ -76,7 +82,7 @@ public:
 	// load in meshes
 	void InitObjects();
 	// fire the current object, with parameters from input
-	void FireShot(float _angle);
+	void FireShot(float _angle, float _power);
 	// reset all game elements
 	void Reset();
 	// setup next shot by moving object into position

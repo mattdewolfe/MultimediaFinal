@@ -3,6 +3,7 @@
 #include "InputController.h"
 
 using namespace Advanced2D;
+// version to use
 
 //camera object
 Camera *camera1;
@@ -26,6 +27,12 @@ bool game_preload()
 
 bool game_init(HWND) 
 {
+	//load all audio using this format
+	if (!g_engine->audio->Load("gong.ogg", "gong")) {
+		g_engine->message("Error loading gong.ogg");
+		return false;
+	}
+
     //set the camera and perspective
     camera1 = new Camera();
     camera1->setPosition(150.0f, 200.0f, -70.0f);
@@ -70,6 +77,7 @@ void game_keyRelease(int key)
 {
 	if (key == DIK_T)
 	{
+		g_engine->audio->Play("gong");
 		ToggleCamera();
 	}
 	else

@@ -3,6 +3,7 @@
 InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
 	angleCap(0.01),
 	shotAngle(0),
+	shotPower(0.01),
 	bShoot(false)
 {
 	angleUpButton = _angleUp;
@@ -10,26 +11,49 @@ InputController::InputController(int _angleUp, int _angleDown, int _shoot) :
 	shootButton = _shoot;
 }
 
-void InputController::ButtonPress(int _key)
+void InputController::ButtonPress(int _key, Advanced2D::GAMESTATE _perState)
 {
-	if (_key == angleUpButton)
+	if (_perState == Advanced2D::GAME_PLAY)
 	{
-		if (shotAngle < angleCap)
-			shotAngle += 0.005f;
+		if (_key == angleUpButton)
+		{
+			if (shotAngle < angleCap)
+				shotAngle += 0.001f;
+		}
+		else if (_key == angleDownButton)
+		{
+			if (shotAngle > -angleCap)
+				shotAngle -= 0.001f;
+		}
+		else if (_key == shootButton)
+			bShoot = true;
 	}
-	else if (_key == angleDownButton)
-	{
-		if (shotAngle > -angleCap)
-			shotAngle -= 0.005f;
-	}
-	else if (_key == shootButton)
-		bShoot = true;
 }
 
-void InputController::ButtonRelease(int _key)
+void InputController::ButtonRelease(int _key, Advanced2D::GAMESTATE _perState, Menu *_menu)
 {
-	if (_key == shootButton)
-		bShoot = false;
+	if (_perState == Advanced2D::MAIN_MENU)
+	{
+		if (_key == angleUpButton)
+		{
+			_menu->selectionUp();
+		}
+		else if (_key == angleDownButton)
+		{
+			_menu->selectionDown();
+		}
+	}
+	else if (_perState == Advanced2D::PAUSE)
+	{
+		if (_key == angleUpButton)
+		{
+			_menu->selectionUp();
+		}
+		else if (_key == angleDownButton)
+		{
+			_menu->selectionDown();
+		}
+	}
 }
 
 bool InputController::SetAngleUpBtn(int _new)
@@ -63,6 +87,13 @@ bool InputController::SetShootBtn(int _new)
 		return true;
 	}
 	return false;
+}
+
+void InputController::incrementShotPower()
+{
+	shotPower += 0.01;
+	if (shotPower > 0.06)
+		shotPower = 0.01;
 }
 
 InputController::~InputController(void)

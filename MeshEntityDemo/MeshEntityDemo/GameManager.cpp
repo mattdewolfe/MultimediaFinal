@@ -2,6 +2,7 @@
 
 GameManager::GameManager() :
 	timePerTurn(4000),
+	powerIncrementalTimer(0),
 	roundDelay(1000),
 	players(2), 
 	gameState(Advanced2D::MAIN_MENU),
@@ -12,10 +13,9 @@ GameManager::GameManager() :
 	currentPlayer(PLAYER_ONE), 
 	autoShotAngle(0)
 {
-	// load UI Sprites
-	ui = new UI();
-	ui->LoadSprites();
-	ui->UpdateVisuals(gameState);
+	// init the hud
+	hud = new HUD();
+
 	// Setup input controllers
 	for (int i = 0; i < GameManager::PLAYERS_MAX; i++)
 	{
@@ -41,8 +41,73 @@ void GameManager::ChangePlayer()
 		SetupShot();
 }
 
+void GameManager::UpdateVisuals(Advanced2D::GAMESTATE _perState)
+{
+	//get list of all entities
+	std::list<Advanced2D::Entity*> sprites = g_engine->getEntityList();
+
+	std::list<Advanced2D::Entity*>::iterator iter;
+	iter = sprites.begin();
+	Advanced2D::Entity* currentEntity;
+	while (iter != sprites.end())
+	{
+		currentEntity = *iter;
+		if (currentEntity->getRenderType() == Advanced2D::RENDER2D)
+		{
+			if (currentEntity->getDrawState() == _perState)
+			{
+				currentEntity->setVisible(true);
+			}
+			else { currentEntity->setVisible(false); }
+		}
+		iter++;
+	}
+}
+
 void GameManager::Update()
 {
+	switch (gameState)
+	{
+		case Advanced2D::NEXT_SHOT:
+			if (turnStartTime + roundDelay < clock.getTimer())
+			{
+				turnStartTime = clock.getTimer();
+				SetGameState(Advanced2D::GAME_PLAY);
+			}
+			break;
+		case Advanced2D::GAME_PLAY:
+			if (inputs[currentPlayer]->CheckFire() == true)
+			{
+				inputs[currentPlayer]->SetFireFalse();
+				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
+			}
+			else if (turnStartTime + timePerTurn < clock.getTimer())
+			{
+				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
+			}
+			// if this happens, game be over
+			if (currentShot * shotsPerTeam > shotsPerGame)
+			{
+				// done and done, say who the winner is and stuff
+				SetGameState(Advanced2D::GAME_OVER);
+			}
+
+			//increase power of shot every half a second
+			if (powerIncrementalTimer + 500 < clock.getTimer())
+			{
+				inputs[currentPlayer]->incrementShotPower();
+				powerIncrementalTimer = clock.getTimer();
+			}
+
+			break;
+		case Advanced2D::GAME_OVER:
+			// calc winner
+			break;
+		case Advanced2D::EXITING:
+			g_engine->Close();
+			break;
+	}
+	/*
 	int temp = clock.getTimer()%800;
 	if ( temp < 100) temp = 0;
 	else if (temp < 200) temp = 1;
@@ -67,11 +132,11 @@ void GameManager::Update()
 		case Advanced2D::GAME_PLAY:
 			if (inputs[currentPlayer]->CheckFire() == true)
 			{
-				FireShot(inputs[currentPlayer]->GetShotAngle());
+				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
 			}
 			else if (turnStartTime + timePerTurn < clock.getTimer())
 			{
-				FireShot(inputs[currentPlayer]->GetShotAngle());
+				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
 			}
 			// if this happens, game be over
 			if (currentShot * shotsPerTeam > shotsPerGame)
@@ -89,11 +154,15 @@ void GameManager::Update()
 		case Advanced2D::GAME_OVER:
 			// calc winner
 			break;
-	}
+	}*/
 }
 
 void GameManager::InitObjects()
 {
+	inputs[1]->SetAngleDownBtn(DIK_DOWNARROW);
+	inputs[1]->SetAngleUpBtn(DIK_UPARROW);
+	inputs[1]->SetShootBtn(DIK_L);
+	
 	Advanced2D::Mesh *mesh;
 	for (int i = 0; i < players; i++)
 	{
@@ -190,17 +259,46 @@ void GameManager::InitObjects()
 	terrain->SetPosition(0, -8, 0);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
+
+	// hud elements (2d)
+
+	Advanced2D::Sprite *sprite = new Advanced2D::Sprite();
+	sprite->loadImage("main_menu.png");
+	mainMenu = new Menu(sprite);
+	mainMenu->addItem("START", Advanced2D::GAME_PLAY);
+	mainMenu->addItem("HELP", Advanced2D::HELP);
+	mainMenu->addItem("EXIT", Advanced2D::EXITING);
+
+	sprite = new Advanced2D::Sprite();
+	sprite->loadImage("pause.png");
+	pauseMenu = new Menu(sprite);
+	pauseMenu->addItem("RESUME", Advanced2D::GAME_PLAY);
+	pauseMenu->addItem("EXIT", Advanced2D::EXITING);
+
+	sprite = new Advanced2D::Sprite();
+	sprite->loadImage("help_screen.png");
+	sprite->setDrawState(Advanced2D::GAMESTATE::HELP);
+	g_engine->addEntity(sprite);
+
+	sprite = new Advanced2D::Sprite();
+	sprite->loadImage("exit.png");
+	sprite->setDrawState(Advanced2D::GAMESTATE::EXITING);
+	g_engine->addEntity(sprite);
+
+	//set 2D visuals for the current gamestate
+	UpdateVisuals(gameState);
 }
 
-void GameManager::FireShot(float _angle)
+void GameManager::FireShot(float _angle, float _power)
 {
 	// calc shot angle from input controller
 	float x = _angle;
+	float z = _power;
 	// calculate z and x values based on power/angle
-	rocks[currentPlayer][currentShot - 1]->SetVelocity(x, 0.0f, inputs[currentPlayer]->GetShotPower());
+	rocks[currentPlayer][currentShot - 1]->SetVelocity(x, 0.0f, z);
 	SetGameState(Advanced2D::NEXT_SHOT);
 	ChangePlayer();
-	turnStartTime = clock.getTimer() + roundDelay;
+	turnStartTime = clock.getTimer();
 }
 
 void GameManager::Reset()
@@ -220,7 +318,7 @@ void GameManager::SetupShot()
 void GameManager::PassKeyPressInput(int _key)
 {
 	// only the input controller should be watching for key down
-	inputs[currentPlayer]->ButtonPress(_key);
+	inputs[currentPlayer]->ButtonPress(_key, gameState);
 }
 
 void GameManager::PassKeyReleaseInput(int _key)
@@ -236,8 +334,8 @@ void GameManager::PassKeyReleaseInput(int _key)
 	{
 		if (gameState == Advanced2D::MAIN_MENU)
 		{
-			SetGameState(Advanced2D::GAME_PLAY);
-			SetupShot();
+			SetGameState(mainMenu->getMenuItem(mainMenu->getCurrentSelection())->getGoToState());
+			if (gameState == Advanced2D::GAME_PLAY) { SetupShot(); }
 		}
 		else if (gameState == Advanced2D::GAME_PLAY)
 		{
@@ -245,7 +343,11 @@ void GameManager::PassKeyReleaseInput(int _key)
 		}
 		else if (gameState == Advanced2D::PAUSE)
 		{
-			SetGameState(Advanced2D::GAME_PLAY);
+			SetGameState(pauseMenu->getMenuItem(pauseMenu->getCurrentSelection())->getGoToState());
+		}
+		else if (gameState == Advanced2D::HELP)
+		{
+			SetGameState(Advanced2D::MAIN_MENU);
 		}
 		else if (gameState == Advanced2D::GAME_OVER)
 		{
@@ -254,8 +356,17 @@ void GameManager::PassKeyReleaseInput(int _key)
 	}
 	else
 	{
-		// otherwise pass input onto current controller
-		inputs[currentPlayer]->ButtonRelease(_key);
+		// otherwise pass input onto current controller for menus
+		if (gameState == Advanced2D::MAIN_MENU)
+		{
+			inputs[PLAYER_ONE]->ButtonRelease(_key, gameState, mainMenu);
+			inputs[PLAYER_TWO]->ButtonRelease(_key, gameState, mainMenu);
+		}
+		else if (gameState == Advanced2D::PAUSE)
+		{
+			inputs[PLAYER_ONE]->ButtonRelease(_key, gameState, pauseMenu);
+			inputs[PLAYER_TWO]->ButtonRelease(_key, gameState, pauseMenu);
+		}
 	}
 }
 

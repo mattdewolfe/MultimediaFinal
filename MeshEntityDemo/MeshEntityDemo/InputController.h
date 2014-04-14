@@ -2,6 +2,7 @@
 #define INPUTCONTROLLER_H
 
 #include "..\..\Engine\Advanced2D.h"
+#include "Menu.h"
 
 class InputController
 {
@@ -22,9 +23,10 @@ public:
 	InputController(int _angleUp = DIK_W, int _angleDown = DIK_S, int _shoot = DIK_SPACE);
 	virtual ~InputController(void);
 
-	void ButtonPress(int _key);
-	void ButtonRelease(int _key);
+	void ButtonPress(int _key, Advanced2D::GAMESTATE _perState);
+	void ButtonRelease(int _key, Advanced2D::GAMESTATE _perState, Menu *_menu);
 	bool CheckFire() { return bShoot; }
+	void incrementShotPower();
 
 #pragma region Get/Set
 	bool SetAngleUpBtn(int _new);
@@ -37,11 +39,7 @@ public:
 	int GetShootBtn() { return shootButton; }
 	
 	float GetShotAngle() { return shotAngle; }
-
-	void SetShotPower(int _pow) { shotPower = (1 + _pow) * 0.01; }
-	
 	float GetShotPower() { return shotPower; }
-	
 	void SetFireFalse () { bShoot = false; }
 #pragma endregion Get/Set
 };
