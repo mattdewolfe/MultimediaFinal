@@ -164,8 +164,8 @@ void GameManager::Update()
 
 void GameManager::InitObjects()
 {
-	inputs[1]->SetAngleDownBtn(DIK_DOWNARROW);
-	inputs[1]->SetAngleUpBtn(DIK_UPARROW);
+	inputs[1]->SetAngleDownBtn(DIK_LEFTARROW);
+	inputs[1]->SetAngleUpBtn(DIK_RIGHTARROW);
 	inputs[1]->SetShootBtn(DIK_L);
 	
 	Advanced2D::Mesh *mesh;
@@ -326,6 +326,7 @@ void GameManager::Reset()
 void GameManager::SetupShot()
 {
 	rocks[currentPlayer][currentShot - 1]->SetPosition(0.0f, -6.0f, -85.0f);
+	turnStartTime = clock.getTimer();
 }
 
 void GameManager::PassKeyPressInput(int _key)

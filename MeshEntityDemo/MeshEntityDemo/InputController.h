@@ -20,7 +20,7 @@ private:
 
 // Functions
 public:
-	InputController(int _angleUp = DIK_W, int _angleDown = DIK_S, int _shoot = DIK_SPACE);
+	InputController(int _angleUp = DIK_D, int _angleDown = DIK_A, int _shoot = DIK_SPACE);
 	virtual ~InputController(void);
 
 	void ButtonPress(int _key, Advanced2D::GAMESTATE _perState);
