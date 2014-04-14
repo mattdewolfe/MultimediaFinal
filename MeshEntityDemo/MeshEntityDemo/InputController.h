@@ -37,6 +37,11 @@ public:
 	int GetShootBtn() { return shootButton; }
 	
 	float GetShotAngle() { return shotAngle; }
+
+	void SetShotPower(int _pow) { shotPower = (1 + _pow) * 0.01; }
+	
+	float GetShotPower() { return shotPower; }
+	
 	void SetFireFalse () { bShoot = false; }
 #pragma endregion Get/Set
 };

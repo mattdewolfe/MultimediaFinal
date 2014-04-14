@@ -43,8 +43,20 @@ void GameManager::ChangePlayer()
 
 void GameManager::Update()
 {
+	int temp = clock.getTimer()%800;
+	if ( temp < 100) temp = 0;
+	else if (temp < 200) temp = 1;
+	else if (temp < 300) temp = 2;
+	else if (temp < 400) temp = 3;
+	else if (temp < 500) temp = 4;
+	else if (temp < 600) temp = 3;
+	else if (temp < 700) temp = 2;
+	else temp = 1;
+	
+
 	switch (gameState)
 	{
+		
 		case Advanced2D::NEXT_SHOT:
 			if (turnStartTime + roundDelay < clock.getTimer())
 			{
@@ -67,6 +79,12 @@ void GameManager::Update()
 				// done and done, say who the winner is and stuff
 				SetGameState(Advanced2D::GAME_OVER);
 			}
+			
+			inputs[currentPlayer]->SetShotPower(temp);
+			Advanced2D::Entity* ent;
+			ent = g_engine->findEntity("power_sprite");
+			dynamic_cast<Advanced2D::Sprite*>(ent)->setCurrentFrame(temp);
+
 			break;
 		case Advanced2D::GAME_OVER:
 			// calc winner
@@ -179,10 +197,10 @@ void GameManager::FireShot(float _angle)
 	// calc shot angle from input controller
 	float x = _angle;
 	// calculate z and x values based on power/angle
-	rocks[currentPlayer][currentShot - 1]->SetVelocity(x, 0.0f, 0.01f);
+	rocks[currentPlayer][currentShot - 1]->SetVelocity(x, 0.0f, inputs[currentPlayer]->GetShotPower());
 	SetGameState(Advanced2D::NEXT_SHOT);
 	ChangePlayer();
-	turnStartTime = clock.getTimer();
+	turnStartTime = clock.getTimer() + roundDelay;
 }
 
 void GameManager::Reset()

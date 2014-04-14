@@ -6,6 +6,7 @@ UI::UI(void)
 
 void UI::LoadSprites()
 {
+	// load all sprites, and pass into g_engine->addEntity
 	Advanced2D::Sprite *sprite = new Advanced2D::Sprite();
 	sprite->loadImage("title_screen.png");
 	sprite->setDrawState(Advanced2D::GAMESTATE::MAIN_MENU);
@@ -16,11 +17,33 @@ void UI::LoadSprites()
 	sprite->setDrawState(Advanced2D::GAMESTATE::PAUSE);
 	g_engine->addEntity(sprite);
 
+	Advanced2D::Sprite *sprite2 = new Advanced2D::Sprite();
+	sprite2->loadImage("ring_sprite.png");
+	sprite2->setDrawState(Advanced2D::GAMESTATE::GAME_PLAY);
+	float x = sprite2->getWidth()/2;
+	sprite2->setPosition(g_engine->getScreenWidth()/2 - x, 800);
+		
 	sprite = new Advanced2D::Sprite();
-	sprite->loadImage("target_line2.png");
+	sprite->loadImage("power_sprite.png");
+	sprite->setName("power_sprite");
 	sprite->setDrawState(Advanced2D::GAMESTATE::GAME_PLAY);
+	sprite->setPosition(g_engine->getScreenWidth()/2 - x, 800);
+	sprite->setWidth(100);
+	sprite->setCurrentFrame(0);
+	sprite->setColumns(5);
 	g_engine->addEntity(sprite);
-	// load all sprites, and pass into g_engine->addEntity
+	// add ring sprite after the power so it is behind it, 
+	// but we must grab it before hand to position elements
+	g_engine->addEntity(sprite2);
+
+	sprite = new Advanced2D::Sprite();
+	sprite->loadImage("arrow_sprite.png");
+	sprite->setName("arrow_sprite");
+	sprite->setDrawState(Advanced2D::GAMESTATE::GAME_PLAY);
+	sprite->setPosition(g_engine->getScreenWidth()/2 - x, 780);
+	g_engine->addEntity(sprite);
+	
+
 }
 
 void UI::UpdateAngle(float _new)
