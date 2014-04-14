@@ -1,4 +1,5 @@
 #include "Advanced2D.h"
+#include "fmod.hpp"
 
 #ifndef _AUDIO_H
 #define _AUDIO_H 1

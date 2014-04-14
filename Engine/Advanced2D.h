@@ -40,7 +40,7 @@
 #include "Collider.h"
 #include "Font.h"
 #ifdef _NOAUDIO
-//#include "fmod.hpp"
+#include "fmod.hpp"
 #endif
 #include "Audio.h"
 #include "Entity.h"
