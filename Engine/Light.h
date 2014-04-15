@@ -14,7 +14,7 @@ private:
 	int p_lightNum;
 
 public:
-	Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 direction, float range);
+	Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 direction, float range, D3DXVECTOR3 color);
 	~Light(void);
 
 	void setX(float value) { p_light.Position.x = value; }

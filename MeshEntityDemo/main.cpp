@@ -10,6 +10,7 @@ Camera *camera1;
 Camera *camera2;
 Light *light;
 Light *light2;
+Light *light3;
 GameManager *gameManager;
 
 void ToggleCamera();
@@ -43,19 +44,25 @@ bool game_init(HWND)
     camera2->setTarget(0.0f, 0.0f, 0.0f);
     camera2->Update();
 
-    //create a directional light
-    D3DXVECTOR3 pos(30.0f,0.0f,80.0f);
-    D3DXVECTOR3 dir(0.0f,0.0f,80.0f);
-    light = new Light(0, D3DLIGHT_POINT, pos, dir, 500);
-    light->setColor(D3DXCOLOR(255,0,0,0));
-	
-	//create a directional light
-    D3DXVECTOR3 pos2(30.0f,0.0f,-80.0f);
-    D3DXVECTOR3 dir2(0.0f,0.0f,-80.0f);
-    light2 = new Light(0, D3DLIGHT_POINT, pos2, dir2, 500);
-    light2->setColor(D3DXCOLOR(0,255,0,0));
+	g_engine->SetAmbient(D3DCOLOR_RGBA(0,0,0,0));
 
-//  g_engine->SetAmbient(D3DCOLOR_RGBA(255,255,255,0));
+    //create spot lights
+    D3DXVECTOR3 pos(0.0f, 30.0f, 20.0f);
+    D3DXVECTOR3 dir(0.0f, 5.0f, 20.0f);
+	D3DXVECTOR3 col(0.3f, 0.8f, 0.2f);
+    light = new Light(1, D3DLIGHT_POINT, pos, dir, 90, col);
+   
+    D3DXVECTOR3 pos2(0.0f, 30.0f, -40.0f);
+    D3DXVECTOR3 dir2(0.0f, 5.0f, -40.0f);
+	D3DXVECTOR3 col2(0.1f, 0.1f, 1.0f);
+    light2 = new Light(2, D3DLIGHT_POINT, pos2, dir2, 100, col2);
+    
+	D3DXVECTOR3 pos3(0, 30.0f, 80.0f);
+    D3DXVECTOR3 dir3(0.0f, 5.0f, 80.0f);
+	D3DXVECTOR3 col3(0, 0.5f, 0.4f);
+    light3 = new Light(3, D3DLIGHT_POINT, pos3, dir3, 100, col3);
+
+	
 	
 	// Setup custom classes
 	gameManager = new GameManager();
@@ -77,7 +84,7 @@ void game_keyRelease(int key)
 {
 	if (key == DIK_T)
 	{
-		g_engine->audio->Play("gong");
+	//	g_engine->audio->Play("gong");
 		ToggleCamera();
 	}
 	else

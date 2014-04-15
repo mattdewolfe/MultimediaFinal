@@ -3,7 +3,7 @@
 namespace Advanced2D {
 
 
-Light::Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 direction, float range)
+Light::Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 direction, float range, D3DXVECTOR3 color)
 {
 	this->p_lightNum = lightNum;
 	ZeroMemory( &p_light, sizeof(D3DLIGHT9) );
@@ -12,9 +12,9 @@ Light::Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 
 	{
 		case D3DLIGHT_POINT:
 			p_light.Type = D3DLIGHT_POINT;
-			p_light.Diffuse.r = 1.0f;
-			p_light.Diffuse.g = 1.0f;
-			p_light.Diffuse.b = 1.0f;
+			p_light.Diffuse.r = color.x;
+			p_light.Diffuse.g = color.y;
+			p_light.Diffuse.b = color.z;
 			p_light.Position = position;
 			p_light.Attenuation0 = 0.1f;
 			p_light.Range = range;
@@ -22,9 +22,9 @@ Light::Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 
 
 		case D3DLIGHT_SPOT:
 			p_light.Type = D3DLIGHT_SPOT;
-			p_light.Diffuse.r = 1.0f;
-			p_light.Diffuse.g = 1.0f;
-			p_light.Diffuse.b = 1.0f;
+			p_light.Diffuse.r = color.x;
+			p_light.Diffuse.g = color.y;
+			p_light.Diffuse.b = color.z;
 			p_light.Diffuse.a = 1.0f;
 			p_light.Position = position;
 			p_light.Direction = direction;
@@ -38,9 +38,9 @@ Light::Light(int lightNum, D3DLIGHTTYPE type, D3DXVECTOR3 position, D3DXVECTOR3 
 		case D3DLIGHT_DIRECTIONAL:
 		default:
 			p_light.Type = D3DLIGHT_DIRECTIONAL;
-			p_light.Diffuse.r = 1.0f;
-			p_light.Diffuse.g = 1.0f;
-			p_light.Diffuse.b = 1.0f;
+			p_light.Diffuse.r = color.x;
+			p_light.Diffuse.g = color.y;
+			p_light.Diffuse.b = color.z;
 			p_light.Diffuse.a = 1.0f;
 			p_light.Range = range;
 			//create a normalized direction 
