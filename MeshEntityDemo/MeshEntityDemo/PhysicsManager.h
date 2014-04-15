@@ -10,6 +10,7 @@ const D3DXVECTOR3 ZERO_VECTOR(0, 0, 0);
 class PhysicsManager
 {
 public:
+	bool scoring[2];
 	PhysicsManager(void);
 	~PhysicsManager(void);
 
@@ -17,6 +18,17 @@ public:
 
 	void AddPhysicsBody(Advanced2D::Mesh* body);
 	
+	bool AwardPlayerOnePoints() 
+	{ 
+		return scoring[0]; 
+		scoring[1] = false;
+	}
+	bool AwardPlayerTwoPoints() 
+	{ 
+		return scoring[1];
+		scoring[1] = false;
+	}
+
 private:
 	void CheckCollisionPair (Advanced2D::Mesh* mesh1, Advanced2D::Mesh* mesh2);
 	void HandleCollision();
@@ -27,7 +39,7 @@ private:
 	// applies innate forces, such as friction and gravity
 	void UpdateVelocity();
 	void UpdatePosition();
-
+	
 	// given a vector3, returned a normalized vector
 	D3DXVECTOR3 Normalize (D3DXVECTOR3);
 	// calculate length of a vector3

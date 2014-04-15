@@ -2,6 +2,9 @@
 
 PhysicsManager::PhysicsManager(void)
 {
+	scoring[0] = false;
+	scoring[1] = false;
+	
 	currTime = clock();
 	prevTime = currTime;
 	dt = 0;
@@ -188,8 +191,14 @@ void PhysicsManager::CheckCollisionPair(Advanced2D::Mesh* mesh1, Advanced2D::Mes
 			// if the AABB is the "target", destroy the plane and score for the player
 			if (mesh2->getName() == "target")
 			{
+				if (mesh1->getName() == "team1")
+					scoring[0] = true;
+				else
+					scoring[1] = true;
+
 				mesh1->setVisible(false);
 				mesh1->setAwake(false);
+
 			}
 			// if not the target, bounce the sphere off the AABB
 			else

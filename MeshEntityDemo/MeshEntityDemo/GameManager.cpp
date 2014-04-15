@@ -82,6 +82,12 @@ void GameManager::Update()
 				turnStartTime = clock.getTimer();
 				SetGameState(Advanced2D::GAME_PLAY);
 			}
+			
+			if (physicsManager->AwardPlayerOnePoints() == true)
+				AwardPoints(PLAYER_ONE);
+			else if (physicsManager->AwardPlayerTwoPoints() == true)
+				AwardPoints(PLAYER_TWO);
+
 			physicsManager->Update();
 			break;
 		case Advanced2D::GAME_PLAY:
@@ -116,11 +122,17 @@ void GameManager::Update()
 				inputs[currentPlayer]->incrementShotPower();
 				powerIncrementalTimer = clock.getTimer();
 			}
+			
+			if (physicsManager->AwardPlayerOnePoints() == true)
+				AwardPoints(PLAYER_ONE);
+			else if (physicsManager->AwardPlayerTwoPoints() == true)
+				AwardPoints(PLAYER_TWO);
+			
 			physicsManager->Update();
 			break;
 
 		case Advanced2D::ROUND_OVER:
-			if (turnStartTime + roundDelay < clock.getTimer())
+			if (turnStartTime + timePerTurn < clock.getTimer())
 			{
 				// reset objects for next round
 				SetupNextRound();
@@ -128,10 +140,15 @@ void GameManager::Update()
 				turnStartTime = clock.getTimer();
 				// update scoreboard
 			}
+			if (physicsManager->AwardPlayerOnePoints() == true)
+				AwardPoints(PLAYER_ONE);
+			else if (physicsManager->AwardPlayerTwoPoints() == true)
+				AwardPoints(PLAYER_TWO);
+
 			physicsManager->Update();
 
 		case Advanced2D::GAME_OVER:
-			// calc winner
+			// draw messaage for winning team
 			break;
 		case Advanced2D::EXITING:
 			g_engine->Close();
@@ -410,27 +427,32 @@ void GameManager::AwardPoints(int _team)
 
 void GameManager::SetupNextRound()
 {
-	Advanced2D::Mesh* mesh;
+	Advanced2D::Entity* currentEntity;
 	std::list<Advanced2D::Entity*> temp = g_engine->getEntityList();
 	std::list<Advanced2D::Entity*>::iterator iter;
 	iter = temp.begin();
-/* errors happening here
 	while (iter != temp.end())
     {
-		mesh = dynamic_cast<Advanced2D::Mesh*>(*iter);
-		if (mesh->getName() == "team1" || mesh->getName() == "team2")
+		currentEntity = *iter;
+		if (currentEntity->getRenderType() == Advanced2D::RENDER3D)
 		{
-			//point local sprite to object in the list
-			mesh->setAwake(true);
-			mesh->setVisible(true);
-			mesh->SetPosition(mesh->startPosition);
-			mesh->SetRotation(180, 0, 0);
-			mesh->SetVelocity(0, 0, 0);
+			Advanced2D::Mesh* mesh = dynamic_cast<Advanced2D::Mesh*>(*iter);
+			if (mesh->getName() == "team1" || mesh->getName() == "team2")
+			{
+				//point local sprite to object in the list
+				mesh->setAwake(true);
+				mesh->setVisible(true);
+				mesh->SetPosition(mesh->startPosition);
+				mesh->SetRotation(180, 0, 0);
+				mesh->SetVelocity(0, 0, 0);
+			}
 		}
 		iter++;
-    } */
-	
+    }
+	currentShot = 1;
+	SetupShot();
 }
+
 GameManager::CURRENTPLAYER GameManager::CalculateWinner()
 {
 	// First sum all points
