@@ -61,8 +61,6 @@ bool game_init(HWND)
     D3DXVECTOR3 dir3(0.0f, 5.0f, 80.0f);
 	D3DXVECTOR3 col3(0, 0.5f, 0.4f);
     light3 = new Light(3, D3DLIGHT_POINT, pos3, dir3, 100, col3);
-
-	
 	
 	// Setup custom classes
 	gameManager = new GameManager();
@@ -84,7 +82,7 @@ void game_keyRelease(int key)
 {
 	if (key == DIK_T)
 	{
-	//	g_engine->audio->Play("gong");
+		g_engine->audio->Play("gong");
 		ToggleCamera();
 	}
 	else
