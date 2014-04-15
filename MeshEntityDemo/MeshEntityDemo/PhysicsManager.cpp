@@ -95,50 +95,32 @@ void PhysicsManager::CheckForCollisions()
 
 void PhysicsManager::CheckCollisionPair(Advanced2D::Mesh* mesh1, Advanced2D::Mesh* mesh2)
 {
+	// if the two meshes are spheres
 	if (mesh1->GetCollider()->GetType() == Collider::SPHERE && mesh2->GetCollider()->GetType() == Collider::SPHERE)
 	{
+		// if the two spheres are colliding
 		if ( DXVectorLength( (mesh1->GetPosition() - mesh2->GetPosition() )) < ( ((SphereCollider*)mesh1->GetCollider())->GetRadius() + ((SphereCollider*)mesh2->GetCollider())->GetRadius() ))
 		{
-			mesh1->SetVelocity(-0.01,0,0);
-			mesh2->SetVelocity(-0.01,0,0);
+			
+			// bounce the two spheres off of eachother
+			D3DXVECTOR3 collisionNormal = mesh2->GetPosition() - mesh1->GetPosition();
+			collisionNormal = Normalize(collisionNormal);
 
+			float dotProdNumerator = DXVectorDotProduct(mesh1->GetVelocity(), collisionNormal);
+			float dotProdDenominator = DXVectorLength(mesh1->GetVelocity()) * DXVectorLength(collisionNormal);
+			float collisionAngle = acos(dotProdNumerator/ dotProdDenominator);		
 
-			/*
-			// calculate collision normal
-		D3DXVECTOR3 collisionNormal = mesh1->GetPosition();
-		collisionNormal -= mesh2->GetPosition();
-		collisionNormal = Normalize(collisionNormal);
-
-		float dotProdNumerator = rock1->velocity.DotProduct(collisionNormal);
-		float dotProdDenominator = (rock1->velocity.Length() * collisionNormal.Length() );		
-		float collisionAngle = acos(dotProdNumerator/ dotProdDenominator);
-
-		
-
-		// prevents illogical collisions (i.e. moving objects colliding with stationary objects behind them)
-		if (collisionAngle <= PI/2)
-		{
-			// Calculate new velocity for rock2 (stationary)
-			// percentage of rock1 velocity that will be transfered to rock2
-			float velocityTransferPercentage = cos(collisionAngle);
-			// magnitude of the new velocity for rock2
-			float mag = rock1->velocity.Length() * velocityTransferPercentage;
-			rock2NewVelocity = collisionNormal;
-			rock2NewVelocity.setX(rock2NewVelocity.getX() * mag);
-			rock2NewVelocity.setY(rock2NewVelocity.getY() * mag);	
-			rock2->velocity = rock2NewVelocity;
-
-			// really backwards way of doing it, should really change some functions in Advanced2D::Vector3 to streamline these calculations
-			rock1NewVelocity = rock1->velocity;
-			rock1NewVelocity.setX(rock1NewVelocity.getX() - rock2NewVelocity.getX());
-			rock1NewVelocity.setY(rock1NewVelocity.getY() - rock2NewVelocity.getY());
-
-			rock1->velocity = rock1NewVelocity;
-
+			// prevents illogical collisions (i.e. moving objects colliding with stationary objects behind them)
+			if (collisionAngle <= PI/2)
+			{
+				
+				D3DXVECTOR3 temp = mesh1->GetVelocity();			
+				mesh1->SetVelocity(mesh2->GetVelocity());
+				mesh2->SetVelocity(temp);
+				//mesh1->SetVelocity(-0.01,0,0);
+				//mesh2->SetVelocity(-0.01,0,0);
+			}
 		}
-		*/
-		}
-		
 	}
 
 	// same collision type as below, simply swap order in order for calculations to work
@@ -156,7 +138,7 @@ void PhysicsManager::CheckCollisionPair(Advanced2D::Mesh* mesh1, Advanced2D::Mes
 
 		D3DXVECTOR3 boxToSphere = mesh1->GetPosition() - mesh2->GetPosition();
 		D3DXVECTOR3 closestPointOnBox;	
-
+		
 		// X axis 
 		if (boxToSphere.x < -((AABBCollider*)mesh2->GetCollider())->GetWidth()/2)
 		{
@@ -200,16 +182,42 @@ void PhysicsManager::CheckCollisionPair(Advanced2D::Mesh* mesh1, Advanced2D::Mes
 		D3DXVECTOR3 distance = boxToSphere - closestPointOnBox;
 
 		// not sure why these are all squared, check math again
+		// find out if the sphere and AABB are colliding
 		if (distance.x*distance.x + distance.y*distance.y + distance.z*distance.z < ((SphereCollider*)mesh1->GetCollider())->GetRadius() )
 		{
-			D3DXVECTOR3 collisionNormal = mesh1->GetPosition() - closestPointOnBox;
-			collisionNormal = Normalize(collisionNormal);
+			// if the AABB is the "target", destroy the plane and score for the player
+			if (mesh2->getName() == "target")
+			{
+				mesh1->setVisible(false);
+				mesh1->setAwake(false);
+			}
+			// if not the target, bounce the sphere off the AABB
+			else
+			{
+				D3DXVECTOR3 collisionNormal = mesh1->GetPosition() - closestPointOnBox;
+				collisionNormal = Normalize(collisionNormal);
 
-			D3DXVECTOR3 reboundVector = mesh1->GetVelocity();
-			reboundVector.x = -reboundVector.x;
-			mesh1->SetVelocity(reboundVector);
-			//mesh1->SetVelocity(0,1,0);
-			// collision
+				float dotProdNumerator = DXVectorDotProduct(mesh1->GetVelocity(), collisionNormal);
+				float dotProdDenominator = DXVectorLength(mesh1->GetVelocity()) * DXVectorLength(collisionNormal);
+				float collisionAngle = acos(dotProdNumerator/ dotProdDenominator);		
+
+				// prevents illogical collisions (i.e. moving objects colliding with stationary objects behind them)
+				if (collisionAngle <= PI/2)
+				{
+					D3DXVECTOR3 reboundVector = mesh1->GetVelocity();
+					if (abs(collisionNormal.x) > abs(collisionNormal.z))
+					{
+						reboundVector.x = -reboundVector.x;
+					}				
+					else
+					{
+						reboundVector.z = -reboundVector.z;
+					}
+					mesh1->SetVelocity(reboundVector);
+					//mesh1->SetVelocity(0,1,0);
+					// collision
+				}
+			}
 		}
 	}
 }

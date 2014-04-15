@@ -5,6 +5,7 @@
 #include "InputController.h"
 #include "Menu.h"
 #include "HUD.h"
+#include "PhysicsManager.h"
 
 class GameManager
 {
@@ -24,8 +25,8 @@ private:
 	// Game state - Do not change with =, only with SetGameState function
 	// otherwise sprite drawStates will not be checked
 	Advanced2D::GAMESTATE gameState;
-	// Stores current player
-	CURRENTPLAYER currentPlayer;
+	// Stores current player and winning player
+	CURRENTPLAYER currentPlayer, winningPlayer;
 	// Determines how long player have to make their shot (ms)
 	DWORD timePerTurn;
 	// Hold start time for current players turn (ms)
@@ -46,6 +47,8 @@ private:
 	InputController* inputs[PLAYERS_MAX];
 	// store the current round for array index (0 -> 2)
 	int currentRound;
+	// Physics Manager object
+	PhysicsManager* physicsManager;
 
 public:
 	GameManager();
@@ -99,6 +102,8 @@ public:
 	void AwardPoints(int _team);
 	// Calculate the winning team
 	CURRENTPLAYER CalculateWinner();
+	// Setup pieces for next round
+	void SetupNextRound();
 };
 
 #endif

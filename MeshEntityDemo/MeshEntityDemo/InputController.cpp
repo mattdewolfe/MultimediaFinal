@@ -18,12 +18,12 @@ void InputController::ButtonPress(int _key, Advanced2D::GAMESTATE _perState)
 		if (_key == angleUpButton)
 		{
 			if (shotAngle < angleCap)
-				shotAngle += 0.001f;
+				shotAngle += 0.002f;
 		}
 		else if (_key == angleDownButton)
 		{
 			if (shotAngle > -angleCap)
-				shotAngle -= 0.001f;
+				shotAngle -= 0.002f;
 		}
 		else if (_key == shootButton)
 			bShoot = true;

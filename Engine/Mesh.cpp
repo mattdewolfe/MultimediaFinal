@@ -14,6 +14,8 @@ namespace Advanced2D {
 		velocity = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		rotation = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		scale =	   D3DXVECTOR3(1.0f,1.0f,1.0f);
+		hasCollider = false;
+		collider = nullptr;
 	}
 	
 	Mesh::~Mesh(void)
@@ -184,6 +186,8 @@ namespace Advanced2D {
 		position.x += velocity.x;
 	    position.y += velocity.y;
 	    position.z += velocity.z;
+
+		Rotate(3*velocity.x, 3*velocity.y, 3*velocity.z);
 	}
 	
 	void Mesh::LimitBoundary(double left,double right,double top,double bottom,double back,double front) 
@@ -199,5 +203,16 @@ namespace Advanced2D {
 	    }
 	}
 
+	void Mesh::AddSphereCollider(float radius)
+	{
+		collider = new SphereCollider(radius);
+		hasCollider = true;
+	}
+
+	void Mesh::AddAABBCollider(float width, float height, float depth)
+	{
+		collider = new AABBCollider(width, height, depth);
+		hasCollider = true;
+	}
 };
 

@@ -16,6 +16,7 @@ namespace Advanced2D {
 		NEXT_SHOT,
 		PAUSE,
 		HELP,
+		ROUND_OVER,
 		SCORING,
 		GAME_OVER,
 		EXITING,

@@ -3,6 +3,8 @@
 #include "Advanced2D.h"
 #include "Entity.h"
 #include "Collider.h"
+#include "SphereCollider.h"
+#include "CylinderCollider.h"
 
 namespace Advanced2D {
 
@@ -22,22 +24,29 @@ namespace Advanced2D {
 		D3DXVECTOR3 velocity;
 		D3DXVECTOR3 rotation;
 		D3DXVECTOR3 scale;
-		
-	    D3DXMATRIX matWorld;
+				
+		D3DXMATRIX matWorld;
 	    D3DXMATRIX matTranslate;
 		D3DXMATRIX matRotate;
 		D3DXMATRIX matScale;
 	
+		bool hasCollider;
 		Collider* collider;
 	public:
+		D3DXVECTOR3 startPosition;
+	    
 		Mesh(void);
 		~Mesh(void);
 		void move();
 		void animate() { }
 		void draw();
 		// Add a physics collider to this object
-		void AddCollider(Collider* _collider, Collider::TYPE _type);
+		void AddAABBCollider(float width, float height, float depth);
+		void AddSphereCollider(float radius);
+		void AddCylinderCollider(float height, float radius);
 		Collider* GetCollider() { return collider; }
+		// think of a better way of checking this bool than a get method
+		bool HasCollider() { return hasCollider; }
 		int GetFaceCount();
 		int GetVertexCount();
 	

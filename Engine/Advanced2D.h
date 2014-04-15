@@ -38,6 +38,9 @@
 #include "ParticleEmitter.h"
 #include "Input.h"
 #include "Collider.h"
+#include "SphereCollider.h"
+#include "AABBCollider.h"
+#include "CylinderCollider.h"
 #include "Font.h"
 #ifdef _NOAUDIO
 #include "fmod.hpp"

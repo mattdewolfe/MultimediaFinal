@@ -86,16 +86,18 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\AABBCollider.cpp" />
     <ClCompile Include="..\Advanced2D.cpp" />
     <ClCompile Include="..\Audio.cpp" />
     <ClCompile Include="..\Camera.cpp" />
-    <ClCompile Include="..\Collider.cpp" />
+    <ClCompile Include="..\CylinderCollider.cpp" />
     <ClCompile Include="..\Entity.cpp" />
     <ClCompile Include="..\Font.cpp" />
     <ClCompile Include="..\Input.cpp" />
     <ClCompile Include="..\Light.cpp" />
     <ClCompile Include="..\Mesh.cpp" />
     <ClCompile Include="..\ParticleEmitter.cpp" />
+    <ClCompile Include="..\SphereCollider.cpp" />
     <ClCompile Include="..\Sprite.cpp" />
     <ClCompile Include="..\Texture.cpp" />
     <ClCompile Include="..\Timer.cpp" />
@@ -104,16 +106,19 @@
     <ClCompile Include="..\winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AABBCollider.h" />
     <ClInclude Include="..\Advanced2D.h" />
     <ClInclude Include="..\Audio.h" />
     <ClInclude Include="..\Camera.h" />
     <ClInclude Include="..\Collider.h" />
+    <ClInclude Include="..\CylinderCollider.h" />
     <ClInclude Include="..\Entity.h" />
     <ClInclude Include="..\Font.h" />
     <ClInclude Include="..\Input.h" />
     <ClInclude Include="..\Light.h" />
     <ClInclude Include="..\Mesh.h" />
     <ClInclude Include="..\ParticleEmitter.h" />
+    <ClInclude Include="..\SphereCollider.h" />
     <ClInclude Include="..\Sprite.h" />
     <ClInclude Include="..\Texture.h" />
     <ClInclude Include="..\Timer.h" />

@@ -97,24 +97,10 @@ void game_keyPress(int key)
 
 void game_entityUpdate(Advanced2D::Entity* entity) 
 { 
-    if (entity->getRenderType() == RENDER3D)
-    {
-        //type-cast Entity to a Mesh
-        Mesh* mesh = (Mesh*)entity;
-
-	/*	D3DXVECTOR3 pos = mesh->GetPosition();
-		pos.z -= 0.1f;
-		mesh->SetPosition(pos);*/
-    }
 }
 
 void game_entityRender(Advanced2D::Entity* entity) 
 { 
-    //type-cast Entity to a Mesh
-    Mesh* mesh = (Mesh*)entity;
-
-    //engine automatically renders each entity
-    //but we can respond to each render event here
 }
 
 void game_end() 

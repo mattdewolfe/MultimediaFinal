@@ -1,7 +1,7 @@
 #include "GameManager.h"
 
 GameManager::GameManager() :
-	timePerTurn(4000),
+	timePerTurn(5000),
 	powerIncrementalTimer(0),
 	roundDelay(1000),
 	players(2), 
@@ -11,6 +11,7 @@ GameManager::GameManager() :
 	shotsPerGame(9), 
 	cameraOne(false),
 	currentPlayer(PLAYER_ONE), 
+	winningPlayer(PLAYERS_MAX),
 	autoShotAngle(0), 
 	currentRound(0)
 {
@@ -26,6 +27,8 @@ GameManager::GameManager() :
 		scores[2][i] = 0;
 		scores[3][i] = 0;
 	}
+	physicsManager = new PhysicsManager();
+
 	InitObjects();
 }
 
@@ -79,6 +82,7 @@ void GameManager::Update()
 				turnStartTime = clock.getTimer();
 				SetGameState(Advanced2D::GAME_PLAY);
 			}
+			physicsManager->Update();
 			break;
 		case Advanced2D::GAME_PLAY:
 			if (inputs[currentPlayer]->CheckFire() == true)
@@ -93,18 +97,39 @@ void GameManager::Update()
 			// if this happens, game be over
 			if (currentShot * shotsPerTeam > shotsPerGame)
 			{
-				// done and done, say who the winner is and stuff
-				SetGameState(Advanced2D::GAME_OVER);
+				currentRound++;
+				if (currentRound >= ROUNDSPERGAME)
+				{
+					// done and done, say who the winner is and stuff
+					SetGameState(Advanced2D::GAME_OVER);
+					winningPlayer = CalculateWinner();
+				}
+				else
+				{
+					SetGameState(Advanced2D::ROUND_OVER);
+					turnStartTime = clock.getTimer();
+				}
 			}
-
 			//increase power of shot every half a second
 			if (powerIncrementalTimer + 500 < clock.getTimer())
 			{
 				inputs[currentPlayer]->incrementShotPower();
 				powerIncrementalTimer = clock.getTimer();
 			}
-
+			physicsManager->Update();
 			break;
+
+		case Advanced2D::ROUND_OVER:
+			if (turnStartTime + roundDelay < clock.getTimer())
+			{
+				// reset objects for next round
+				SetupNextRound();
+				SetGameState(Advanced2D::GAME_PLAY);
+				turnStartTime = clock.getTimer();
+				// update scoreboard
+			}
+			physicsManager->Update();
+
 		case Advanced2D::GAME_OVER:
 			// calc winner
 			break;
@@ -112,54 +137,6 @@ void GameManager::Update()
 			g_engine->Close();
 			break;
 	}
-	/*
-	int temp = clock.getTimer()%800;
-	if ( temp < 100) temp = 0;
-	else if (temp < 200) temp = 1;
-	else if (temp < 300) temp = 2;
-	else if (temp < 400) temp = 3;
-	else if (temp < 500) temp = 4;
-	else if (temp < 600) temp = 3;
-	else if (temp < 700) temp = 2;
-	else temp = 1;
-	
-
-	switch (gameState)
-	{
-		
-		case Advanced2D::NEXT_SHOT:
-			if (turnStartTime + roundDelay < clock.getTimer())
-			{
-				turnStartTime = clock.getTimer();
-				SetGameState(Advanced2D::GAME_PLAY);
-			}
-			break;
-		case Advanced2D::GAME_PLAY:
-			if (inputs[currentPlayer]->CheckFire() == true)
-			{
-				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
-			}
-			else if (turnStartTime + timePerTurn < clock.getTimer())
-			{
-				FireShot(inputs[currentPlayer]->GetShotAngle(), inputs[currentPlayer]->GetShotPower());
-			}
-			// if this happens, game be over
-			if (currentShot * shotsPerTeam > shotsPerGame)
-			{
-				// done and done, say who the winner is and stuff
-				SetGameState(Advanced2D::GAME_OVER);
-			}
-			
-			inputs[currentPlayer]->SetShotPower(temp);
-			Advanced2D::Entity* ent;
-			ent = g_engine->findEntity("power_sprite");
-			dynamic_cast<Advanced2D::Sprite*>(ent)->setCurrentFrame(temp);
-
-			break;
-		case Advanced2D::GAME_OVER:
-			// calc winner
-			break;
-	}*/
 }
 
 void GameManager::InitObjects()
@@ -174,24 +151,30 @@ void GameManager::InitObjects()
 		for (int j = 0; j < shotsPerTeam; j++)
 		{
 			mesh = new Advanced2D::Mesh();
-			mesh->Load("airplane 2.x");
-			mesh->setAwake(true);
-			mesh->SetScale(1.0f,1.0f,1.0f);
-			mesh->SetRotation(180, 0, 0);
-		
 			if (i == 0)
+			{
+				mesh->Load("airplane 2.x");
+				mesh->setAwake(true);
+				mesh->SetScale(1.0f,1.0f,1.0f);
+				mesh->SetRotation(180, 0, 0);
 				mesh->setName("team1");
+			}
 			else if (i == 1)
+			{
+				mesh->Load("airplane 2.x");
+				mesh->setAwake(true);
+				mesh->SetScale(1.0f,1.0f,1.0f);
+				mesh->SetRotation(180, 0, 0);
 				mesh->setName("team2");
-			else if (i == 2)
-				mesh->setName("team3");
-			else if (i == 3)
-				mesh->setName("team4");
-
+			}
 			float x = -40 + i*80;
 			float y = 35 + j*5;
 			float z = -80;
 			mesh->SetPosition(x, y, z);
+			mesh->startPosition = D3DXVECTOR3(x, y, z);
+			// add collider and push to physics 
+			mesh->AddSphereCollider(1.5);
+			physicsManager->AddPhysicsBody(mesh);
 			// add object to local entity list
 			rocks[i][j] = mesh;
 			// add mesh to entity manager
@@ -205,6 +188,8 @@ void GameManager::InitObjects()
 	terrain->setName("ground");
 	terrain->CreateCube(350, 5, 350);
 	terrain->SetPosition(0, -12, 5);
+	terrain->AddAABBCollider(350,5,250);	
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -213,6 +198,8 @@ void GameManager::InitObjects()
 	terrain->setName("target");
 	terrain->CreateSphere(4, 20, 20);
 	terrain->SetPosition(0, -10, 80);
+	terrain->AddAABBCollider(4,20,4);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -222,6 +209,8 @@ void GameManager::InitObjects()
 	terrain->setName("board");
 	terrain->CreateCube(40.0f, 2.0f, 200.0f);
 	terrain->SetPosition(0, -10, 0);
+	terrain->AddAABBCollider(40, 2, 200);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -230,6 +219,8 @@ void GameManager::InitObjects()
 	terrain->setName("bumper");
 	terrain->CreateCube(2.0f, 5.0f, 200.0f);
 	terrain->SetPosition(-20, -8, 0);
+	terrain->AddAABBCollider(2, 5, 200);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -238,6 +229,8 @@ void GameManager::InitObjects()
 	terrain->setName("bumper");
 	terrain->CreateCube(2.0f, 5.0f, 200.0f);
 	terrain->SetPosition(20, -8, 0);
+	terrain->AddAABBCollider(2, 5, 200);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 	
@@ -246,6 +239,8 @@ void GameManager::InitObjects()
 	terrain->setName("bumper");
 	terrain->CreateCube(20.0f, 5.0f, 5.0f);
 	terrain->SetPosition(0, -8, 100);
+	terrain->AddAABBCollider(20, 5, 5);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -254,6 +249,8 @@ void GameManager::InitObjects()
 	terrain->setName("bumper");
 	terrain->CreateCube(40.0f, 5.0f, 5.0f);
 	terrain->SetPosition(0, -8, -100);
+	terrain->AddAABBCollider(40, 5, 5);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 	
@@ -262,6 +259,8 @@ void GameManager::InitObjects()
 	terrain->setName("bumper");
 	terrain->CreateCube(10.0f, 10.0f, 5.0f);
 	terrain->SetPosition(0, -8, 0);
+	terrain->AddAABBCollider(10, 10, 5);
+	physicsManager->AddPhysicsBody(terrain);
 	terrain->setAwake(true);
 	g_engine->addEntity(terrain);
 
@@ -409,6 +408,29 @@ void GameManager::AwardPoints(int _team)
 	scores[currentRound][_team] += points;
 }
 
+void GameManager::SetupNextRound()
+{
+	Advanced2D::Mesh* mesh;
+	std::list<Advanced2D::Entity*> temp = g_engine->getEntityList();
+	std::list<Advanced2D::Entity*>::iterator iter;
+	iter = temp.begin();
+/* errors happening here
+	while (iter != temp.end())
+    {
+		mesh = dynamic_cast<Advanced2D::Mesh*>(*iter);
+		if (mesh->getName() == "team1" || mesh->getName() == "team2")
+		{
+			//point local sprite to object in the list
+			mesh->setAwake(true);
+			mesh->setVisible(true);
+			mesh->SetPosition(mesh->startPosition);
+			mesh->SetRotation(180, 0, 0);
+			mesh->SetVelocity(0, 0, 0);
+		}
+		iter++;
+    } */
+	
+}
 GameManager::CURRENTPLAYER GameManager::CalculateWinner()
 {
 	// First sum all points
